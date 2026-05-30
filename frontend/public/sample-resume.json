@@ -1,0 +1,24 @@
+{
+  "SUMMARY": "Results-driven Full Stack Developer with 5+ years of experience building scalable web applications using modern technologies. Skilled in React, Node.js, Python, and cloud platforms. Proven track record of delivering high-quality solutions and leading technical initiatives.",
+  "EXP1": [
+    "Led development of microservices architecture for e-commerce platform, improving system scalability by 300%",
+    "Implemented real-time data processing system using Apache Kafka and Node.js, handling 100K+ events per second",
+    "Mentored team of 5 junior developers and established best practices for code quality and testing",
+    "Reduced application load time by 60% through optimization and caching strategies"
+  ],
+  "EXP1_ENV": "React, Node.js, TypeScript, PostgreSQL, MongoDB, Docker, Kubernetes, AWS, Kafka, Redis, CI/CD pipelines",
+  "EXP2": [
+    "Built responsive web applications using React and Redux, serving 500K+ monthly active users",
+    "Developed REST APIs and GraphQL endpoints with Python FastAPI, achieving 99.9% uptime",
+    "Implemented comprehensive testing strategy with 85% code coverage using Jest and Pytest",
+    "Optimized database queries reducing query time from 2s to 200ms"
+  ],
+  "EXP2_ENV": "React, Redux, Python, FastAPI, GraphQL, MySQL, Elasticsearch, Jest, Pytest, GitHub Actions",
+  "EXP3": [
+    "Developed full-stack e-learning platform handling 50K+ concurrent users",
+    "Implemented payment gateway integration with Stripe for subscription management",
+    "Created automated deployment pipeline reducing deployment time from 30min to 5min",
+    "Established monitoring and alerting system using Prometheus and Grafana"
+  ],
+  "EXP3_ENV": "JavaScript, Python, React, Django, PostgreSQL, Docker, Jenkins, Prometheus, Grafana, Linux"
+}

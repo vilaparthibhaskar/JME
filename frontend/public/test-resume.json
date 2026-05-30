@@ -1,0 +1,24 @@
+{
+  "SUMMARY": "Experienced Full Stack Developer with 6+ years building scalable web applications. Proficient in React, Node.js, Python, and cloud technologies. Passionate about writing clean code and mentoring junior developers. Strong track record delivering high-impact projects on time and within budget.",
+  "EXP1": [
+    "Architected and led development of microservices platform serving 2M+ users, improving system scalability by 400%",
+    "Implemented real-time analytics dashboard using React and WebSockets, processing 50K+ events per minute",
+    "Optimized database queries and implemented caching strategy, reducing API response time from 3s to 200ms",
+    "Mentored team of 8 junior developers, conducted code reviews, and established development best practices"
+  ],
+  "EXP1_ENV": "React, Redux, Node.js, Express, TypeScript, PostgreSQL, MongoDB, Redis, Docker, Kubernetes, AWS, Kafka, GraphQL, Jest, Git",
+  "EXP2": [
+    "Built full-featured e-commerce platform with payment integration, serving 100K+ transactions monthly",
+    "Developed REST APIs and GraphQL endpoints achieving 99.95% uptime with automated testing",
+    "Created CI/CD pipeline using GitHub Actions, reducing deployment time from 45min to 8min",
+    "Implemented comprehensive monitoring and alerting system using Prometheus and Grafana"
+  ],
+  "EXP2_ENV": "JavaScript, Python, React, Django, FastAPI, MySQL, Elasticsearch, Docker, Jenkins, Linux, AWS S3, Stripe API",
+  "EXP3": [
+    "Developed real-time chat application with 500K+ downloads using React Native",
+    "Implemented end-to-end encryption for messaging using industry-standard protocols",
+    "Optimized app performance achieving 60 FPS consistently, reducing memory footprint by 35%",
+    "Launched MVP in 3 months and scaled to 1M+ active users within 6 months"
+  ],
+  "EXP3_ENV": "React Native, JavaScript, Firebase, Cloud Firestore, Redux, Agora SDK, Xcode, Android Studio, Objective-C, Swift"
+}
