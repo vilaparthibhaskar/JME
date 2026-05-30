@@ -232,6 +232,7 @@ def generate_resume(token: str, request: GenerateResume, background_tasks: Backg
     template_map = {
         "template1": "template.docx",
         "template2": "template_2.docx",
+        "template3": "template_3.docx",
     }
     template_file = template_map.get(request.template or "template1", "template.docx")
     template_path = Path(__file__).parent / "template" / template_file

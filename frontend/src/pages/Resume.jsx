@@ -241,6 +241,7 @@ export default function Resume() {
             >
               <option value="template1">Template 1</option>
               <option value="template2">Template 2</option>
+              <option value="template3">Template 3</option>
             </select>
           </div>
           <button
