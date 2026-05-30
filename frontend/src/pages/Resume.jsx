@@ -239,9 +239,9 @@ export default function Resume() {
               value={selectedTemplate}
               onChange={(e) => setSelectedTemplate(e.target.value)}
             >
-              <option value="template1">Template 1</option>
-              <option value="template2">Template 2</option>
-              <option value="template3">Template 3</option>
+              <option value="template1">FT Template</option>
+              <option value="template2">Java Template</option>
+              <option value="template3">Data Template</option>
             </select>
           </div>
           <button
