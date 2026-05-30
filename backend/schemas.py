@@ -13,6 +13,7 @@ class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[str] = None
     full_name: Optional[str] = None
+    resume_name: Optional[str] = None
 
 class ChangePassword(BaseModel):
     current_password: str
@@ -21,12 +22,14 @@ class ChangePassword(BaseModel):
 
 class GenerateResume(BaseModel):
     resume_data: Dict[str, Any]
+    template: Optional[str] = "template1"
 
 class User(BaseModel):
     id: int
     username: str
     email: str
     full_name: Optional[str]
+    resume_name: Optional[str]
     is_active: bool
     is_admin: bool
     created_at: datetime
@@ -56,6 +59,7 @@ class VersionBase(BaseModel):
     hobbies: Optional[List[str]] = None
     achievements: Optional[List[str]] = None
     base_exp_json: Optional[str] = None
+    resume_title: Optional[str] = None
     resume_name_displayed: Optional[str] = None
     user_location: Optional[str] = None
     user_email: Optional[str] = None

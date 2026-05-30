@@ -91,7 +91,7 @@ const api = {
     return response.json()
   },
 
-  async generateResume(token, resumeData) {
+  async generateResume(token, resumeData, template = 'template1') {
     const response = await fetch(`${API_BASE_URL}/api/resume/generate?token=${token}`, {
       method: 'POST',
       headers: {
@@ -100,6 +100,7 @@ const api = {
       },
       body: JSON.stringify({
         resume_data: resumeData,
+        template,
       }),
     })
     if (!response.ok) {

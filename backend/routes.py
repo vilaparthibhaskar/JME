@@ -142,6 +142,8 @@ def update_user_profile(token: str, user_update: UserUpdate, db: Session = Depen
     # Update fields if provided
     if user_update.full_name is not None:
         user.full_name = user_update.full_name
+    if user_update.resume_name is not None:
+        user.resume_name = user_update.resume_name
     
     # Don't allow changing username or email for now (can be added later with validation)
     # if user_update.username is not None:
@@ -225,7 +227,12 @@ def generate_resume(token: str, request: GenerateResume):
         )
     
     # Get template path
-    template_path = Path(__file__).parent / "template" / "template.docx"
+    template_map = {
+        "template1": "template.docx",
+        "template2": "template_2.docx",
+    }
+    template_file = template_map.get(request.template or "template1", "template.docx")
+    template_path = Path(__file__).parent / "template" / template_file
     
     if not template_path.exists():
         raise HTTPException(

@@ -12,6 +12,7 @@ const EMPTY_FORM = {
   hobbies: [],       // array of strings
   achievements: [],
   base_exp_json: '',
+  resume_title: '',
   resume_name_displayed: '',
   user_location: '',
   user_email: '',
@@ -167,6 +168,7 @@ export default function Versions() {
       hobbies: version.hobbies || [],
       achievements: version.achievements || [],
       base_exp_json: version.base_exp_json || '',
+      resume_title: version.resume_title || '',
       resume_name_displayed: version.resume_name_displayed || '',
       user_location: version.user_location || '',
       user_email: version.user_email || '',
@@ -201,6 +203,7 @@ export default function Versions() {
         hobbies: (formData.hobbies || []).length ? formData.hobbies : null,
         achievements: (formData.achievements || []).length ? formData.achievements : null,
         base_exp_json: formData.base_exp_json?.trim() || null,
+        resume_title: formData.resume_title?.trim() || null,
         resume_name_displayed: formData.resume_name_displayed?.trim() || null,
         user_location: formData.user_location?.trim() || null,
         user_email: formData.user_email?.trim() || null,
@@ -305,7 +308,10 @@ export default function Versions() {
           {/* Personal Info */}
           <div className="form-section">
             <div className="section-title">👤 Personal / Contact Info</div>
-            <div className="labeled-row two-col">
+            <input className="v-input full-width" placeholder="Resume Title (e.g., Full Stack Developer)"
+              value={formData.resume_title || ''}
+              onChange={(e) => setField('resume_title', e.target.value)} />
+            <div className="labeled-row two-col" style={{ marginTop: 10 }}>
               <input className="v-input" placeholder="Displayed Name (e.g., John Doe)"
                 value={formData.resume_name_displayed || ''}
                 onChange={(e) => setField('resume_name_displayed', e.target.value)} />

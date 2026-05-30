@@ -27,6 +27,7 @@ export default function Settings() {
   // Profile form state
   const [profileData, setProfileData] = useState({
     full_name: user?.full_name || '',
+    resume_name: user?.resume_name || '',
   })
 
   // Password form state
@@ -62,6 +63,7 @@ export default function Settings() {
     try {
       const updateData = {
         full_name: profileData.full_name,
+        resume_name: profileData.resume_name || null,
       }
       
       const response = await api.updateProfile(token, updateData)
@@ -194,6 +196,19 @@ export default function Settings() {
                       onChange={handleProfileChange}
                       placeholder="Enter your full name"
                     />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Resume File Name</label>
+                    <input
+                      type="text"
+                      name="resume_name"
+                      className="form-control"
+                      value={profileData.resume_name}
+                      onChange={handleProfileChange}
+                      placeholder="e.g. John_Doe (default: Resume)"
+                    />
+                    <small className="text-muted">Used as the downloaded DOCX filename</small>
                   </div>
 
                   <div className="form-group">

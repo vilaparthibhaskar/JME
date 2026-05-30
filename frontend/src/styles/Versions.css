@@ -142,6 +142,11 @@
   margin-bottom: 10px;
 }
 
+/* Two equal columns, no label */
+.labeled-row.two-col {
+  grid-template-columns: 1fr 1fr;
+}
+
 .row-label {
   font-size: 12px;
   font-weight: 700;

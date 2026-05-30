@@ -10,6 +10,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     full_name = Column(String, nullable=True)
+    resume_name = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -42,6 +43,7 @@ class Version(Base):
     base_exp_json = Column(Text, nullable=True)
 
     # Personal / contact info
+    resume_title = Column(String, nullable=True)
     resume_name_displayed = Column(String, nullable=True)
     user_location = Column(String, nullable=True)
     user_email = Column(String, nullable=True)

@@ -16,6 +16,7 @@ export default function Resume() {
   const [prompts, setPrompts] = useState([])
   const [selectedPromptId, setSelectedPromptId] = useState('')
   const [promptCopied, setPromptCopied] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState('template1')
 
   const showMessage = (text, type = 'success') => {
     setMessage({ text, type })
@@ -91,7 +92,8 @@ export default function Resume() {
         if (version.education)                   resumeJson.EDUCATION             = version.education
         if (version.cgpa)                        resumeJson.CGPA                  = version.cgpa
         if (version.edu_timeline)                resumeJson.EDU_TIMELINE          = version.edu_timeline
-        if (version.resume_name_displayed)       resumeJson.RESUME_NAME_DISPLAYED = version.resume_name_displayed
+        if (version.resume_title)                resumeJson.RESUME_TITLE           = version.resume_title
+        if (version.resume_name_displayed)       resumeJson.RESUME_NAME_DISPLAYED  = version.resume_name_displayed
         if (version.user_location)               resumeJson.USER_LOCATION         = version.user_location
         if (version.user_email)                  resumeJson.USER_EMAIL            = version.user_email
         if (version.github)                      resumeJson.GITHUB                = version.github
@@ -107,14 +109,14 @@ export default function Resume() {
     if (!token) { showMessage('Authentication required', 'error'); return }
     setDownloading(true)
     try {
-      const blob = await api.generateResume(token, resumeJson)
+      const blob = await api.generateResume(token, resumeJson, selectedTemplate)
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       const vName = selectedVersionId
         ? `_${versions.find((v) => v.id === parseInt(selectedVersionId))?.name || ''}`
         : ''
-      link.download = `${user?.full_name || 'Resume'}${vName}_${Date.now()}.docx`
+      link.download = `${user?.resume_name || 'Resume'}.docx`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -230,6 +232,17 @@ export default function Resume() {
             rows={14}
             spellCheck={false}
           />
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 8 }}>
+            <label style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>📄 Template:</label>
+            <select
+              className="version-select"
+              value={selectedTemplate}
+              onChange={(e) => setSelectedTemplate(e.target.value)}
+            >
+              <option value="template1">Template 1</option>
+              <option value="template2">Template 2</option>
+            </select>
+          </div>
           <button
             className="download-docx-btn large-btn"
             onClick={handleDownloadResume}
