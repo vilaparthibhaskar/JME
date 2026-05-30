@@ -69,4 +69,14 @@ export const router = createBrowserRouter([
     path: '/signup',
     element: <Signup />,
   },
+  {
+    path: '*',
+    element: (
+      <div style={{ textAlign: 'center', padding: '100px 20px', fontFamily: 'inherit' }}>
+        <h1 style={{ fontSize: 72, fontWeight: 800, color: '#667eea' }}>404</h1>
+        <p style={{ fontSize: 20, color: '#888', marginBottom: 32 }}>Page not found</p>
+        <a href="/" style={{ color: '#667eea', fontWeight: 600, fontSize: 16 }}>← Back to Home</a>
+      </div>
+    ),
+  },
 ])

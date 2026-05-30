@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Form
+from fastapi import APIRouter, Depends, HTTPException, status, Form, BackgroundTasks
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -15,10 +15,12 @@ from pathlib import Path
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY environment variable is not set")
 ADMIN_SECRET_KEY = os.getenv("ADMIN_SECRET_KEY", "change-this-admin-key")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480"))  # 8 hours default
 
 def create_access_token(data: dict, expires_delta=None):
     to_encode = data.copy()
@@ -207,7 +209,7 @@ def change_password(token: str, password_change: ChangePassword, db: Session = D
 resume_router = APIRouter(prefix="/api/resume", tags=["resume"])
 
 @resume_router.post("/generate")
-def generate_resume(token: str, request: GenerateResume):
+def generate_resume(token: str, request: GenerateResume, background_tasks: BackgroundTasks):
     """Generate resume from JSON data using template"""
     # Verify token
     try:
@@ -266,8 +268,9 @@ def generate_resume(token: str, request: GenerateResume):
             tmp_path = tmp_file.name
             doc.save(tmp_path)
         
-        # Return file as download
+        # Return file as download, delete temp file after response
         filename = f"{username}_Resume.docx"
+        background_tasks.add_task(os.unlink, tmp_path)
         return FileResponse(
             path=tmp_path,
             filename=filename,

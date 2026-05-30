@@ -8,12 +8,16 @@ from models import Base
 
 load_dotenv()
 
+# CORS: in production set ALLOWED_ORIGINS env var to your frontend URL
+_raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:4173")
+ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app = FastAPI(title="JME Backend", version="1.0.0")
 
 # CORS middleware MUST be added first, before routes
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
