@@ -32,6 +32,8 @@ This guide deploys:
 | **Runtime** | `Python 3` |
 | **Build Command** | `pip install -r requirements.txt` |
 | **Start Command** | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
+
+> **Python version:** A `backend/.python-version` file pins Python to **3.11.9**. Render reads this automatically — no extra config needed. Do **not** change the Runtime to a specific version manually.
 | **Instance Type** | Free (or Starter for always-on) |
 
 ### 1.2 Set Environment Variables
