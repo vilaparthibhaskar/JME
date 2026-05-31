@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
-from routes import router as auth_router, resume_router, versions_router, prompts_router
+from routes import router as auth_router, resume_router, versions_router, prompts_router, admin_router
+from jobs_router import jobs_router
+from user_jobs_router import router as user_jobs_router
 from database import engine
 from models import Base
 
@@ -31,6 +33,9 @@ app.include_router(auth_router)
 app.include_router(resume_router)
 app.include_router(versions_router)
 app.include_router(prompts_router)
+app.include_router(admin_router)
+app.include_router(jobs_router)
+app.include_router(user_jobs_router)
 
 # Health check endpoint
 @app.get("/")

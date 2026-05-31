@@ -24,9 +24,9 @@ export default function Signup() {
 
     try {
       const data = await api.register(
-        username, 
-        email, 
-        password, 
+        username.toLowerCase(),
+        email.toLowerCase(),
+        password,
         fullName,
         isAdmin ? adminKey : null
       )

@@ -207,6 +207,61 @@ const api = {
     }
     return response.json()
   },
+
+  // ── Jobs ───────────────────────────────────────────────────────────────────
+  async getJobs({ companyIds, page = 1, perPage = 12, search = '', dateFrom = '', dateTo = '', useCache = false, signal } = {}) {    const params = new URLSearchParams({
+      company_ids: companyIds.join(','),
+      page:        String(page),
+      per_page:    String(perPage),
+      search:      search || '',
+      date_from:   dateFrom || '',
+      date_to:     dateTo || '',
+      use_cache:   String(useCache),
+    })
+    const response = await fetch(`${API_BASE_URL}/api/jobs?${params}`, { signal })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to fetch jobs')
+    }
+    return response.json()
+  },
+
+  // ── User-job statuses ──────────────────────────────────────────────────────
+  async getUserJobStatuses(token) {
+    const response = await fetch(`${API_BASE_URL}/api/user-jobs?token=${token}`)
+    if (!response.ok) throw new Error('Failed to fetch job statuses')
+    return response.json()   // { [job_id]: { status, title, url, ... } }
+  },
+
+  async setJobStatus(token, jobId, status, title, url, companyId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-jobs/${encodeURIComponent(jobId)}?token=${token}`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ status, title, url, company_id: companyId }),
+    })
+    if (!response.ok) throw new Error('Failed to set job status')
+    return response.json()
+  },
+
+  async removeJobStatus(token, jobId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-jobs/${encodeURIComponent(jobId)}?token=${token}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) throw new Error('Failed to remove job status')
+    return response.json()
+  },
+
+  // ── Admin ──────────────────────────────────────────────────────────────────
+  async getAnalytics(token) {
+    const response = await fetch(`${API_BASE_URL}/api/admin/analytics?token=${token}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to fetch analytics')
+    }
+    return response.json()
+  },
 }
 
 export default api

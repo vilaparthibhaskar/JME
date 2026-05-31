@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text, ForeignKey, JSON, UniqueConstraint
 from datetime import datetime
 from database import Base
 
@@ -15,6 +15,8 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_login = Column(DateTime, nullable=True)
+    resume_downloads = Column(Integer, default=0)
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username}, email={self.email}, is_admin={self.is_admin})>"
@@ -74,3 +76,38 @@ class Prompt(Base):
 
     def __repr__(self):
         return f"<Prompt(id={self.id}, title={self.title}, user_id={self.user_id})>"
+
+
+class UserJob(Base):
+    """Tracks a user's interaction status (saved / discarded) with a specific job."""
+    __tablename__ = "user_jobs"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    user_id     = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    job_id      = Column(String(255), nullable=False)   # stable id from _make_job_id
+    company_id  = Column(Integer, nullable=False)
+    title       = Column(String(500))
+    url         = Column(Text)
+    status      = Column(String(50), nullable=False)    # 'saved' | 'discarded'
+    first_seen_at = Column(DateTime, default=datetime.utcnow)
+    updated_at  = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "job_id", name="uq_user_job_id"),
+    )
+
+    def __repr__(self):
+        return f"<UserJob(user_id={self.user_id}, job_id={self.job_id}, status={self.status})>"
+
+
+class CompanyJobCache(Base):
+    """Stores the most-recently scraped job list for each company (one row per company)."""
+    __tablename__ = "company_job_cache"
+
+    company_id = Column(Integer, primary_key=True)
+    jobs       = Column(JSON, nullable=False)   # full list of job dicts, un-paginated
+    cached_at  = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<CompanyJobCache(company_id={self.company_id}, jobs={len(self.jobs or [])}, cached_at={self.cached_at})>"
+

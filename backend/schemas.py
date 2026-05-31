@@ -34,9 +34,38 @@ class User(BaseModel):
     is_admin: bool
     created_at: datetime
     updated_at: datetime
+    last_login: Optional[datetime] = None
+    resume_downloads: int = 0
 
     class Config:
         from_attributes = True
+
+
+class UserAnalyticItem(BaseModel):
+    id: int
+    username: str
+    email: str
+    full_name: Optional[str]
+    is_admin: bool
+    is_active: bool
+    created_at: datetime
+    last_login: Optional[datetime] = None
+    resume_downloads: int
+    versions_count: int
+    prompts_count: int
+
+
+class AnalyticsResponse(BaseModel):
+    total_users: int
+    active_users: int
+    inactive_users: int
+    online_now: int
+    total_resumes_downloaded: int
+    total_versions: int
+    total_prompts: int
+    admin_count: int
+    new_users_this_month: int
+    users: List[UserAnalyticItem]
 
 
 class ProjectItem(BaseModel):

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from models import User as UserModel, Version as VersionModel, Prompt as PromptModel
-from schemas import UserCreate, User, UserUpdate, ChangePassword, GenerateResume, VersionCreate, VersionUpdate, VersionResponse, PromptCreate, PromptUpdate, PromptResponse
+from schemas import UserCreate, User, UserUpdate, ChangePassword, GenerateResume, VersionCreate, VersionUpdate, VersionResponse, PromptCreate, PromptUpdate, PromptResponse, UserAnalyticItem, AnalyticsResponse
 from security import hash_password, verify_password
 from database import get_db
 from docxtpl import DocxTemplate, RichText
@@ -35,9 +35,9 @@ def create_access_token(data: dict, expires_delta=None):
 @router.post("/register")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     """Register a new user - can be admin with secret key"""
-    # Check if user already exists
+    # Check if user already exists (case-insensitive)
     db_user = db.query(UserModel).filter(
-        (UserModel.email == user.email) | (UserModel.username == user.username)
+        (UserModel.email == user.email.lower()) | (UserModel.username == user.username.lower())
     ).first()
     
     if db_user:
@@ -57,11 +57,11 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
                 detail="Invalid admin secret key"
             )
     
-    # Create new user
+    # Create new user (store username/email as lowercase)
     hashed_password = hash_password(user.password)
     db_user = UserModel(
-        username=user.username,
-        email=user.email,
+        username=user.username.lower(),
+        email=user.email.lower(),
         hashed_password=hashed_password,
         full_name=user.full_name,
         is_active=True,
@@ -74,7 +74,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     
     # Create access token
     access_token = create_access_token(
-        data={"sub": user.username},
+        data={"sub": user.username.lower()},
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     
@@ -87,7 +87,8 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 def login_user(username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     """Login user and return access token - accepts username or email"""
-    # Try to find user by username or email
+    # Normalize to lowercase for case-insensitive login
+    username = username.lower()
     user = db.query(UserModel).filter(
         (UserModel.username == username) | (UserModel.email == username)
     ).first()
@@ -97,6 +98,10 @@ def login_user(username: str = Form(...), password: str = Form(...), db: Session
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
+    
+    # Update last login timestamp
+    user.last_login = datetime.utcnow()
+    db.commit()
     
     access_token = create_access_token(
         data={"sub": user.username},
@@ -209,7 +214,7 @@ def change_password(token: str, password_change: ChangePassword, db: Session = D
 resume_router = APIRouter(prefix="/api/resume", tags=["resume"])
 
 @resume_router.post("/generate")
-def generate_resume(token: str, request: GenerateResume, background_tasks: BackgroundTasks):
+def generate_resume(token: str, request: GenerateResume, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """Generate resume from JSON data using template"""
     # Verify token
     try:
@@ -272,6 +277,13 @@ def generate_resume(token: str, request: GenerateResume, background_tasks: Backg
         # Return file as download, delete temp file after response
         filename = f"{username}_Resume.docx"
         background_tasks.add_task(os.unlink, tmp_path)
+        
+        # Increment resume download counter
+        db_user = db.query(UserModel).filter(UserModel.username == username).first()
+        if db_user:
+            db_user.resume_downloads = (db_user.resume_downloads or 0) + 1
+            db.commit()
+        
         return FileResponse(
             path=tmp_path,
             filename=filename,
@@ -412,3 +424,77 @@ def delete_version(version_id: int, token: str, db: Session = Depends(get_db)):
     db.delete(db_version)
     db.commit()
     return {"message": "Version deleted successfully"}
+
+
+# Admin Router
+admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
+
+def _require_admin(token: str, db: Session) -> UserModel:
+    """Decode token and ensure user is admin."""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user = db.query(UserModel).filter(UserModel.username == username).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+
+@admin_router.get("/analytics", response_model=AnalyticsResponse)
+def get_analytics(token: str, db: Session = Depends(get_db)):
+    """Get platform-wide analytics — admin only."""
+    _require_admin(token, db)
+
+    now = datetime.utcnow()
+    thirty_days_ago = now - timedelta(days=30)
+    one_hour_ago = now - timedelta(hours=1)
+    first_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    all_users = db.query(UserModel).all()
+    total_users = len(all_users)
+    active_users = sum(1 for u in all_users if u.last_login and u.last_login >= thirty_days_ago)
+    inactive_users = total_users - active_users
+    online_now = sum(1 for u in all_users if u.last_login and u.last_login >= one_hour_ago)
+    total_resumes_downloaded = sum(u.resume_downloads or 0 for u in all_users)
+    admin_count = sum(1 for u in all_users if u.is_admin)
+    new_users_this_month = sum(1 for u in all_users if u.created_at and u.created_at >= first_of_month)
+
+    total_versions = db.query(VersionModel).count()
+    total_prompts = db.query(PromptModel).count()
+
+    users_data = []
+    for u in sorted(all_users, key=lambda x: x.created_at or datetime.min, reverse=True):
+        versions_count = db.query(VersionModel).filter(VersionModel.user_id == u.id).count()
+        prompts_count = db.query(PromptModel).filter(PromptModel.user_id == u.id).count()
+        users_data.append(UserAnalyticItem(
+            id=u.id,
+            username=u.username,
+            email=u.email,
+            full_name=u.full_name,
+            is_admin=u.is_admin,
+            is_active=u.is_active,
+            created_at=u.created_at,
+            last_login=u.last_login,
+            resume_downloads=u.resume_downloads or 0,
+            versions_count=versions_count,
+            prompts_count=prompts_count,
+        ))
+
+    return AnalyticsResponse(
+        total_users=total_users,
+        active_users=active_users,
+        inactive_users=inactive_users,
+        online_now=online_now,
+        total_resumes_downloaded=total_resumes_downloaded,
+        total_versions=total_versions,
+        total_prompts=total_prompts,
+        admin_count=admin_count,
+        new_users_this_month=new_users_this_month,
+        users=users_data,
+    )
