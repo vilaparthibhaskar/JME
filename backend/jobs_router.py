@@ -23,6 +23,7 @@ Response:
 
 import asyncio
 import hashlib
+import logging
 import re
 from datetime import datetime, timedelta
 
@@ -34,6 +35,7 @@ from database import get_db
 from models import CompanyJobCache
 
 jobs_router = APIRouter(prefix="/api", tags=["jobs"])
+logger = logging.getLogger(__name__)
 
 # ── TTL ───────────────────────────────────────────────────────────────────────
 CACHE_TTL_SECONDS = 300  # 5 minutes
@@ -100,7 +102,18 @@ async def get_jobs(
              "has_more": False, "ttl_remaining": {}}
 
     ids: list[int] = [int(p) for p in company_ids.split(",") if p.strip().isdigit()]
+    logger.info(
+        "Jobs request: company_ids=%s page=%s per_page=%s use_cache=%s search=%s date_from=%s date_to=%s",
+        ids,
+        page,
+        per_page,
+        use_cache,
+        bool(search),
+        date_from or "-",
+        date_to or "-",
+    )
     if not ids:
+        logger.info("Jobs request ignored: no valid company IDs")
         return {**empty, "from_cache": False}
 
     # ── Cache path (instant DB read) ──────────────────────────────────────────
@@ -116,9 +129,17 @@ async def get_jobs(
                 ttl_remaining[str(cid)] = max(0, int(CACHE_TTL_SECONDS - age))
                 last_scraped[str(cid)] = row.cached_at.isoformat() + "Z"
         if not all_jobs:
+            logger.info("Jobs cache read: miss for company_ids=%s", ids)
             return {**empty, "from_cache": True, "last_scraped": {}}
         all_jobs = _filter_and_sort(all_jobs, search, date_from, date_to)
         page_jobs, total, has_more = _paginate(all_jobs, page, per_page)
+        logger.info(
+            "Jobs cache read: hit company_ids=%s total=%s returned=%s has_more=%s",
+            ids,
+            total,
+            len(page_jobs),
+            has_more,
+        )
         return {"jobs": page_jobs, "total": total, "page": page, "per_page": per_page,
                 "has_more": has_more, "from_cache": True, "ttl_remaining": ttl_remaining,
                 "last_scraped": last_scraped}
@@ -126,6 +147,7 @@ async def get_jobs(
     # ── Fresh-scrape path (with TTL enforcement) ──────────────────────────────
     valid_ids = [cid for cid in ids if cid in COMPANY_REGISTRY]
     if not valid_ids:
+        logger.info("Jobs request ignored: no registered company IDs in %s", ids)
         return {**empty, "from_cache": False}
 
     now = datetime.utcnow()
@@ -145,6 +167,13 @@ async def get_jobs(
         else:
             to_scrape.append(cid)
 
+    logger.info(
+        "Jobs fresh path: valid_ids=%s ttl_blocked=%s to_scrape=%s",
+        valid_ids,
+        ttl_blocked,
+        to_scrape,
+    )
+
     all_jobs: list[dict] = []
     ttl_remaining: dict[str, int] = {}
     last_scraped: dict[str, str] = {}
@@ -156,6 +185,12 @@ async def get_jobs(
         age = (now - row.cached_at).total_seconds()
         ttl_remaining[str(cid)] = max(0, int(CACHE_TTL_SECONDS - age))
         last_scraped[str(cid)] = row.cached_at.isoformat() + "Z"
+        logger.info(
+            "Jobs TTL-blocked: company_id=%s ttl_remaining=%ss last_scraped=%s",
+            cid,
+            ttl_remaining[str(cid)],
+            last_scraped[str(cid)],
+        )
 
     # Scrape stale/missing companies
     if to_scrape:
@@ -164,28 +199,51 @@ async def get_jobs(
 
         for cid, r in zip(to_scrape, results):
             if isinstance(r, Exception):
+                logger.error("Jobs scrape failed: company_id=%s error=%r", cid, r)
                 # Fall back to stale cache if available rather than returning nothing
                 if cid in cache_rows:
                     all_jobs.extend(cache_rows[cid].jobs)
                     last_scraped[str(cid)] = cache_rows[cid].cached_at.isoformat() + "Z"
+                    logger.info(
+                        "Jobs fallback to stale cache: company_id=%s last_scraped=%s",
+                        cid,
+                        last_scraped[str(cid)],
+                    )
                 continue
             _stamp_ids(r)
             all_jobs.extend(r)
             ttl_remaining[str(cid)] = CACHE_TTL_SECONDS
             last_scraped[str(cid)] = now.isoformat() + "Z"
+            logger.info(
+                "Jobs scrape success: company_id=%s jobs=%s last_scraped=%s",
+                cid,
+                len(r),
+                last_scraped[str(cid)],
+            )
             # Persist to cache (upsert)
             row = cache_rows.get(cid) or db.query(CompanyJobCache).filter(
                 CompanyJobCache.company_id == cid).first()
             if row:
                 row.jobs      = r
                 row.cached_at = now
+                logger.info("Jobs cache update: company_id=%s mode=update jobs=%s", cid, len(r))
             else:
                 db.add(CompanyJobCache(company_id=cid, jobs=r, cached_at=now))
+                logger.info("Jobs cache update: company_id=%s mode=insert jobs=%s", cid, len(r))
         db.commit()
+        logger.info("Jobs cache commit complete: companies=%s", to_scrape)
 
     from_cache = len(to_scrape) == 0   # True only if every company was TTL-blocked
     all_jobs = _filter_and_sort(all_jobs, search, date_from, date_to)
     page_jobs, total, has_more = _paginate(all_jobs, page, per_page)
+    logger.info(
+        "Jobs response: from_cache=%s total=%s returned=%s has_more=%s last_scraped_keys=%s",
+        from_cache,
+        total,
+        len(page_jobs),
+        has_more,
+        sorted(last_scraped.keys()),
+    )
     return {"jobs": page_jobs, "total": total, "page": page, "per_page": per_page,
             "has_more": has_more, "from_cache": from_cache, "ttl_remaining": ttl_remaining,
             "last_scraped": last_scraped}
