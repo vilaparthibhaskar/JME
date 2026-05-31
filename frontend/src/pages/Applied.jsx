@@ -40,7 +40,7 @@ function FilterDropdown({ options, value, onChange, placeholder, accentColor = '
     </div>
   )
 }
-const TEMPLATES = ['template1', 'template2', 'template3']
+const TEMPLATES = ['FT Template', 'Java Template', 'Data Template']
 
 const COLOR_PALETTE = [
   '#4285F4', '#0866FF', '#FF9900', '#00A4EF', '#635BFF',
