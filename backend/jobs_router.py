@@ -107,18 +107,21 @@ async def get_jobs(
     if use_cache:
         all_jobs: list[dict] = []
         ttl_remaining: dict[str, int] = {}
+        last_scraped: dict[str, str] = {}
         for cid in ids:
             row = db.query(CompanyJobCache).filter(CompanyJobCache.company_id == cid).first()
             if row:
                 all_jobs.extend(row.jobs)
                 age = (datetime.utcnow() - row.cached_at).total_seconds()
                 ttl_remaining[str(cid)] = max(0, int(CACHE_TTL_SECONDS - age))
+                last_scraped[str(cid)] = row.cached_at.isoformat() + "Z"
         if not all_jobs:
-            return {**empty, "from_cache": True}
+            return {**empty, "from_cache": True, "last_scraped": {}}
         all_jobs = _filter_and_sort(all_jobs, search, date_from, date_to)
         page_jobs, total, has_more = _paginate(all_jobs, page, per_page)
         return {"jobs": page_jobs, "total": total, "page": page, "per_page": per_page,
-                "has_more": has_more, "from_cache": True, "ttl_remaining": ttl_remaining}
+                "has_more": has_more, "from_cache": True, "ttl_remaining": ttl_remaining,
+                "last_scraped": last_scraped}
 
     # ── Fresh-scrape path (with TTL enforcement) ──────────────────────────────
     valid_ids = [cid for cid in ids if cid in COMPANY_REGISTRY]
@@ -144,6 +147,7 @@ async def get_jobs(
 
     all_jobs: list[dict] = []
     ttl_remaining: dict[str, int] = {}
+    last_scraped: dict[str, str] = {}
 
     # Serve TTL-blocked companies straight from DB
     for cid in ttl_blocked:
@@ -151,6 +155,7 @@ async def get_jobs(
         all_jobs.extend(row.jobs)
         age = (now - row.cached_at).total_seconds()
         ttl_remaining[str(cid)] = max(0, int(CACHE_TTL_SECONDS - age))
+        last_scraped[str(cid)] = row.cached_at.isoformat() + "Z"
 
     # Scrape stale/missing companies
     if to_scrape:
@@ -162,10 +167,12 @@ async def get_jobs(
                 # Fall back to stale cache if available rather than returning nothing
                 if cid in cache_rows:
                     all_jobs.extend(cache_rows[cid].jobs)
+                    last_scraped[str(cid)] = cache_rows[cid].cached_at.isoformat() + "Z"
                 continue
             _stamp_ids(r)
             all_jobs.extend(r)
             ttl_remaining[str(cid)] = CACHE_TTL_SECONDS
+            last_scraped[str(cid)] = now.isoformat() + "Z"
             # Persist to cache (upsert)
             row = cache_rows.get(cid) or db.query(CompanyJobCache).filter(
                 CompanyJobCache.company_id == cid).first()
@@ -180,4 +187,5 @@ async def get_jobs(
     all_jobs = _filter_and_sort(all_jobs, search, date_from, date_to)
     page_jobs, total, has_more = _paginate(all_jobs, page, per_page)
     return {"jobs": page_jobs, "total": total, "page": page, "per_page": per_page,
-            "has_more": has_more, "from_cache": from_cache, "ttl_remaining": ttl_remaining}
+            "has_more": has_more, "from_cache": from_cache, "ttl_remaining": ttl_remaining,
+            "last_scraped": last_scraped}

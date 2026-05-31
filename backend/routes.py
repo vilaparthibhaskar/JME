@@ -151,6 +151,8 @@ def update_user_profile(token: str, user_update: UserUpdate, db: Session = Depen
         user.full_name = user_update.full_name
     if user_update.resume_name is not None:
         user.resume_name = user_update.resume_name
+    if user_update.theme_color is not None:
+        user.theme_color = user_update.theme_color
     
     # Don't allow changing username or email for now (can be added later with validation)
     # if user_update.username is not None:

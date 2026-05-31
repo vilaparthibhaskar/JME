@@ -262,6 +262,165 @@ const api = {
     }
     return response.json()
   },
+
+  // ── Applied Jobs ───────────────────────────────────────────────────────────
+  async getAppliedJobs(token) {
+    const response = await fetch(`${API_BASE_URL}/api/applied-jobs?token=${token}`)
+    if (!response.ok) throw new Error('Failed to fetch applied jobs')
+    return response.json()
+  },
+
+  async createAppliedJob(token, data) {
+    const response = await fetch(`${API_BASE_URL}/api/applied-jobs?token=${token}`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to create applied job')
+    }
+    return response.json()
+  },
+
+  async updateAppliedJob(token, id, data) {
+    const response = await fetch(`${API_BASE_URL}/api/applied-jobs/${id}?token=${token}`, {
+      method:  'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(data),
+    })
+    if (!response.ok) throw new Error('Failed to update applied job')
+    return response.json()
+  },
+
+  async deleteAppliedJob(token, id) {
+    const response = await fetch(`${API_BASE_URL}/api/applied-jobs/${id}?token=${token}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) throw new Error('Failed to delete applied job')
+    return response.json()
+  },
+
+  // ── User Companies ─────────────────────────────────────────────────────
+  async getUserCompanies(token) {
+    const response = await fetch(`${API_BASE_URL}/api/user-companies?token=${token}`)
+    if (!response.ok) throw new Error('Failed to fetch companies')
+    return response.json()
+  },
+
+  async createUserCompany(token, data) {
+    const response = await fetch(`${API_BASE_URL}/api/user-companies?token=${token}`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to create company')
+    }
+    return response.json()
+  },
+
+  async deleteUserCompany(token, id) {
+    const response = await fetch(`${API_BASE_URL}/api/user-companies/${id}?token=${token}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to delete company')
+    }
+    return response.json()
+  },
+
+  // ── Recruiters ─────────────────────────────────────────────────────────────
+  async getRecruiters(token) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiters?token=${token}`)
+    if (!response.ok) throw new Error('Failed to fetch recruiters')
+    return response.json()
+  },
+
+  async createRecruiter(token, data) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiters?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to create recruiter')
+    }
+    return response.json()
+  },
+
+  async updateRecruiter(token, id, data) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiters/${id}?token=${token}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to update recruiter')
+    }
+    return response.json()
+  },
+
+  async deleteRecruiter(token, id) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiters/${id}?token=${token}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to delete recruiter')
+    }
+  },
+
+  // ── Recruiter Groups ──────────────────────────────────────────────────────
+
+  async getRecruiterGroups(token) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiter-groups?token=${token}`)
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to load groups')
+    }
+    return response.json()
+  },
+
+  async createRecruiterGroup(token, data) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiter-groups?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to create group')
+    }
+    return response.json()
+  },
+
+  async updateRecruiterGroup(token, id, data) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiter-groups/${id}?token=${token}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to update group')
+    }
+    return response.json()
+  },
+
+  async deleteRecruiterGroup(token, id) {
+    const response = await fetch(`${API_BASE_URL}/api/recruiter-groups/${id}?token=${token}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to delete group')
+    }
+  },
 }
 
 export default api

@@ -17,6 +17,7 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login = Column(DateTime, nullable=True)
     resume_downloads = Column(Integer, default=0)
+    theme_color = Column(String, nullable=True, default='#52796f')
 
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username}, email={self.email}, is_admin={self.is_admin})>"
@@ -100,6 +101,51 @@ class UserJob(Base):
         return f"<UserJob(user_id={self.user_id}, job_id={self.job_id}, status={self.status})>"
 
 
+class UserCompany(Base):
+    """User-specific company list for tracking applied jobs."""
+    __tablename__ = "user_companies"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    name       = Column(String(255), nullable=False)
+    color      = Column(String(20), nullable=True, default="#667eea")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<UserCompany(id={self.id}, name={self.name}, user_id={self.user_id})>"
+
+
+class AppliedJob(Base):
+    """Tracks job applications submitted by a user."""
+    __tablename__ = "applied_jobs"
+
+    id               = Column(Integer, primary_key=True, index=True)
+    user_id          = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    company_id       = Column(Integer, nullable=False)
+    company_name     = Column(String(255), nullable=False)
+    job_title        = Column(String(500), nullable=False)
+    version_id       = Column(Integer, nullable=True)
+    version_name     = Column(String(255), nullable=True)
+    version_snapshot = Column(JSON, nullable=True)    # snapshot of version data at apply time
+    template_name    = Column(String(100), nullable=True)
+    exp_json         = Column(Text, nullable=True)    # experience JSON used
+    notes            = Column(Text, nullable=True)
+    status           = Column(String(50), default="applied")  # applied|interviewing|offer|rejected
+    job_type         = Column(String(20), nullable=True, default='full_time')  # full_time | contract
+    vendor_company   = Column(String(255), nullable=True)
+    vendor_name      = Column(String(255), nullable=True)
+    vendor_email     = Column(String(255), nullable=True)
+    vendor_phone     = Column(String(50), nullable=True)
+    location         = Column(String(255), nullable=True)
+    impl_partner     = Column(String(255), nullable=True)
+    end_client       = Column(String(255), nullable=True)
+    applied_at       = Column(DateTime, default=datetime.utcnow)
+    created_at       = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<AppliedJob(id={self.id}, user_id={self.user_id}, company={self.company_name}, title={self.job_title})>"
+
+
 class CompanyJobCache(Base):
     """Stores the most-recently scraped job list for each company (one row per company)."""
     __tablename__ = "company_job_cache"
@@ -110,4 +156,40 @@ class CompanyJobCache(Base):
 
     def __repr__(self):
         return f"<CompanyJobCache(company_id={self.company_id}, jobs={len(self.jobs or [])}, cached_at={self.cached_at})>"
+
+
+class Recruiter(Base):
+    """Stores recruiter contacts per user."""
+    __tablename__ = "recruiters"
+
+    id           = Column(Integer, primary_key=True, index=True)
+    user_id      = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    name         = Column(String(255), nullable=False)
+    company      = Column(String(255), nullable=True)
+    title        = Column(String(255), nullable=True)
+    email        = Column(String(255), nullable=True)
+    phone        = Column(String(50), nullable=True)
+    linkedin     = Column(String(500), nullable=True)
+    notes        = Column(Text, nullable=True)
+    last_contact = Column(String(10), nullable=True)   # ISO date "YYYY-MM-DD"
+    created_at   = Column(DateTime, default=datetime.utcnow)
+    updated_at   = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Recruiter(id={self.id}, name={self.name}, user_id={self.user_id})>"
+
+
+class RecruiterGroup(Base):
+    """Named groups of recruiter contacts per user."""
+    __tablename__ = "recruiter_groups"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    name       = Column(String(255), nullable=False)
+    member_ids = Column(JSON, nullable=False, default=list)   # list of recruiter IDs
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<RecruiterGroup(id={self.id}, name={self.name}, user_id={self.user_id})>"
 

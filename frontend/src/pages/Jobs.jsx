@@ -99,7 +99,7 @@ export default function Jobs() {
   }, [token, jobStatuses])
 
   // ── Data (fetching + pagination + infinite scroll) ────────────────────────
-  const { jobs, loading, refreshing, hasMore, totalCount, sentinelRef } = useJobs({
+  const { jobs, loading, refreshing, hasMore, totalCount, lastScraped, sentinelRef } = useJobs({
     selectedCompanyIds: selectedCompanies,
     dateFilter,
     dateFrom,
@@ -119,6 +119,14 @@ export default function Jobs() {
 
   const selectAll = () => setSelectedCompanies(new Set(allCompanyIds))
   const clearAll  = () => setSelectedCompanies(new Set())
+
+  const fmtET = (isoStr) => {
+    if (!isoStr) return null
+    return new Date(isoStr).toLocaleTimeString('en-US', {
+      hour: '2-digit', minute: '2-digit', hour12: false,
+      timeZone: 'America/New_York',
+    }) + ' ET'
+  }
 
   const filteredGroups = INDUSTRY_GROUPS
     .map(g => ({
@@ -222,7 +230,14 @@ export default function Jobs() {
                       <span className="jb-co-logo" style={{ background: c.color }}>
                         {c.initials}
                       </span>
-                      <span className="jb-co-name">{c.name}</span>
+                      <span className="jb-co-name-wrap">
+                        <span className="jb-co-name">{c.name}</span>
+                        {sel && lastScraped[String(c.id)] && (
+                          <span className="jb-co-scraped">
+                            &#128337; {fmtET(lastScraped[String(c.id)])}
+                          </span>
+                        )}
+                      </span>
                       {sel && <span className="jb-co-check">&#10003;</span>}
                     </button>
                   )
@@ -405,7 +420,7 @@ export default function Jobs() {
         *, *::before, *::after { box-sizing: border-box; }
         .jb-root {
           height: calc(100vh - 64px); display: flex; flex-direction: column;
-          background: #f3f4f8; font-family: inherit; overflow: hidden;
+          background: transparent; font-family: inherit; overflow: hidden;
         }
         .jb-topbar {
           display: flex; align-items: center; justify-content: space-between;
@@ -430,7 +445,7 @@ export default function Jobs() {
         .jb-search:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); width: 260px; background: #fff; }
         .jb-search::placeholder { color: #b0b0c8; }
         .jb-body { display: flex; flex: 1; overflow: hidden; }
-        .jb-sidebar { width: 25%; min-width: 220px; max-width: 300px; background: #fff; border-right: 1px solid #e8e8f0; display: flex; flex-direction: column; flex-shrink: 0; }
+        .jb-sidebar { width: 25%; min-width: 220px; max-width: 300px; background: var(--th-sidebar); background-attachment: fixed; border-right: 1px solid var(--th-border); display: flex; flex-direction: column; flex-shrink: 0; }
         .jb-sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 10px; flex-shrink: 0; }
         .jb-sidebar-title { font-size: 13px; font-weight: 700; color: #9090b0; text-transform: uppercase; letter-spacing: 0.6px; }
         .jb-sidebar-actions { display: flex; align-items: center; gap: 4px; }
@@ -451,8 +466,10 @@ export default function Jobs() {
         .jb-company-row:hover    { background: #f5f5fc; }
         .jb-company-row.selected { background: rgba(102,126,234,0.1); }
         .jb-co-logo { width: 30px; height: 30px; border-radius: 8px; color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .jb-co-name { font-size: 13.5px; font-weight: 600; color: #1a1a2e; flex: 1; }
+        .jb-co-name-wrap { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+        .jb-co-name { font-size: 13.5px; font-weight: 600; color: #1a1a2e; }
         .jb-company-row.selected .jb-co-name { color: #667eea; }
+        .jb-co-scraped { font-size: 10px; font-weight: 600; color: #b0b0c8; margin-top: 1px; white-space: nowrap; }
         .jb-co-check { font-size: 11px; color: #667eea; font-weight: 700; }
         .jb-feed { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; }
         .jb-feed::-webkit-scrollbar { width: 6px; }
@@ -470,7 +487,7 @@ export default function Jobs() {
         .jb-saved-toggle:hover { border-color: #f4b942; color: #f4b942; background: rgba(244,185,66,0.06); }
         .jb-saved-toggle.active { border-color: #f4b942; background: rgba(244,185,66,0.1); color: #d4920a; box-shadow: 0 2px 8px rgba(244,185,66,0.2); }
         .jb-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 18px; align-content: start; }
-        .jb-card { background: #fff; border: 1px solid #e8e8f0; border-radius: 16px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; }
+        .jb-card { background: var(--th-card); background-attachment: fixed; border: 1px solid var(--th-border); border-radius: 16px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; }
         .jb-card:hover { box-shadow: 0 8px 30px rgba(102,126,234,0.12); border-color: rgba(102,126,234,0.3); transform: translateY(-2px); }
         .jb-card-top   { display: flex; align-items: center; gap: 12px; }
         .jb-card-logo  { width: 40px; height: 40px; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }

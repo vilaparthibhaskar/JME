@@ -5,8 +5,13 @@ import os
 from routes import router as auth_router, resume_router, versions_router, prompts_router, admin_router
 from jobs_router import jobs_router
 from user_jobs_router import router as user_jobs_router
+from applied_router import router as applied_router
+from user_companies_router import router as user_companies_router
+from recruiters_router import router as recruiters_router
+from recruiter_groups_router import router as recruiter_groups_router
 from database import engine
 from models import Base
+from sqlalchemy import text
 
 load_dotenv()
 
@@ -28,6 +33,33 @@ app.add_middleware(
 # Create all tables on startup (safe - only creates missing tables)
 Base.metadata.create_all(bind=engine)
 
+# Add theme_color column if it doesn't exist yet (one-time migration)
+try:
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE users ADD COLUMN theme_color VARCHAR DEFAULT '#52796f'"))
+        conn.commit()
+except Exception:
+    pass  # Column already exists
+
+# Add job_type + vendor/location columns to applied_jobs if they don't exist (one-time migration)
+_applied_migrations = [
+    "ALTER TABLE applied_jobs ADD COLUMN job_type VARCHAR(20) DEFAULT 'full_time'",
+    "ALTER TABLE applied_jobs ADD COLUMN vendor_company VARCHAR(255)",
+    "ALTER TABLE applied_jobs ADD COLUMN vendor_name VARCHAR(255)",
+    "ALTER TABLE applied_jobs ADD COLUMN vendor_email VARCHAR(255)",
+    "ALTER TABLE applied_jobs ADD COLUMN vendor_phone VARCHAR(50)",
+    "ALTER TABLE applied_jobs ADD COLUMN location VARCHAR(255)",
+    "ALTER TABLE applied_jobs ADD COLUMN impl_partner VARCHAR(255)",
+    "ALTER TABLE applied_jobs ADD COLUMN end_client VARCHAR(255)",
+]
+for _stmt in _applied_migrations:
+    try:
+        with engine.connect() as conn:
+            conn.execute(text(_stmt))
+            conn.commit()
+    except Exception:
+        pass  # Column already exists
+
 # Include routers
 app.include_router(auth_router)
 app.include_router(resume_router)
@@ -36,6 +68,10 @@ app.include_router(prompts_router)
 app.include_router(admin_router)
 app.include_router(jobs_router)
 app.include_router(user_jobs_router)
+app.include_router(applied_router)
+app.include_router(user_companies_router)
+app.include_router(recruiters_router)
+app.include_router(recruiter_groups_router)
 
 # Health check endpoint
 @app.get("/")

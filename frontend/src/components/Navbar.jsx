@@ -39,6 +39,8 @@ export default function Navbar() {
                 <Link to="/resume"     className={isActive('/resume')}>Resume</Link>
                 <Link to="/versions"   className={isActive('/versions')}>Versions</Link>
                 <Link to="/prompts"    className={isActive('/prompts')}>Prompts</Link>
+                <Link to="/applied"     className={isActive('/applied')}>Applied</Link>
+                <Link to="/recruiters"  className={isActive('/recruiters')}>Recruiters</Link>
                 {user?.is_admin && <Link to="/jobs"      className={isActive('/jobs')}>Jobs</Link>}
                 {user?.is_admin && <Link to="/analytics" className={isActive('/analytics')}>Analytics</Link>}
                 {user?.is_admin && <Link to="/companies" className={isActive('/companies')}>Companies</Link>}
@@ -69,6 +71,8 @@ export default function Navbar() {
                     <Link to="/resume"    className="dropdown-item">📄 Resume</Link>
                     <Link to="/versions"  className="dropdown-item">📋 Versions</Link>
                     <Link to="/prompts"   className="dropdown-item">💬 Prompts</Link>
+                    <Link to="/applied"     className="dropdown-item">📝 Applied</Link>
+                    <Link to="/recruiters"  className="dropdown-item">👤 Recruiters</Link>
                     {user?.is_admin && <Link to="/jobs"      className="dropdown-item">💼 Jobs</Link>}
                     {user?.is_admin && <Link to="/analytics" className="dropdown-item">📊 Analytics</Link>}
                     {user?.is_admin && <Link to="/companies" className="dropdown-item">🏢 Companies</Link>}

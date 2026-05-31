@@ -3,14 +3,14 @@
    ═══════════════════════════════════════ */
 
 .navbar {
-  background: rgba(10, 10, 20, 0.96);
+  background: var(--th-nav-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--th-nav-border);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25), 0 1px 0 var(--th-nav-border);
 }
 
 .navbar-container {
@@ -36,27 +36,27 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--th-nav-accent), var(--th-nav-dark));
   color: white;
   font-size: 17px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 2px 10px var(--th-nav-glow);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .navbar-brand:hover .brand-mark {
   transform: scale(1.08);
-  box-shadow: 0 4px 18px rgba(102, 126, 234, 0.7);
+  box-shadow: 0 4px 18px var(--th-nav-glow);
 }
 
 .brand-text {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #e0e0ff 0%, #b0b8ff 100%);
+  background: linear-gradient(135deg, var(--th-nav-brand-from) 0%, var(--th-nav-brand-to) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -79,7 +79,7 @@
 
 .nav-link {
   position: relative;
-  color: rgba(200, 200, 230, 0.75);
+  color: var(--th-nav-text);
   text-decoration: none;
   font-size: 13.5px;
   font-weight: 500;
@@ -92,12 +92,12 @@
 
 .nav-link:hover {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--th-nav-hover);
 }
 
 .nav-link.active {
   color: #ffffff;
-  background: rgba(102, 126, 234, 0.2);
+  background: var(--th-nav-active);
   font-weight: 600;
 }
 
@@ -110,7 +110,7 @@
   width: 20px;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, var(--th-nav-accent), var(--th-nav-dark));
 }
 
 /* ── Auth buttons (guest) ────────────── */
@@ -121,7 +121,7 @@
 }
 
 .btn-signup {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--th-nav-accent), var(--th-nav-dark));
   color: #ffffff;
   text-decoration: none;
   padding: 7px 18px;
@@ -130,13 +130,13 @@
   font-weight: 600;
   letter-spacing: 0.3px;
   transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.35);
+  box-shadow: 0 2px 10px var(--th-nav-glow);
 }
 
 .btn-signup:hover {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(102, 126, 234, 0.55);
+  box-shadow: 0 4px 18px var(--th-nav-glow);
 }
 
 /* ── Admin badge ─────────────────────── */
@@ -164,7 +164,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--th-nav-accent), var(--th-nav-dark));
   color: white;
   font-size: 12px;
   font-weight: 700;
@@ -179,8 +179,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--th-nav-border);
   border-radius: 10px;
   padding: 5px 12px 5px 6px;
   cursor: pointer;
@@ -189,8 +189,8 @@
 }
 
 .nav-user-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--th-nav-hover);
+  border-color: var(--th-nav-active);
   color: #fff;
 }
 
@@ -219,12 +219,12 @@
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
-  background: rgba(15, 15, 28, 0.97);
+  background: var(--th-nav-drop);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--th-nav-border);
   border-radius: 14px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--th-nav-active);
   min-width: 230px;
   overflow: hidden;
   animation: dropIn 0.18s ease;
@@ -245,7 +245,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px 18px 14px;
-  background: rgba(102, 126, 234, 0.08);
+  background: var(--th-nav-active);
 }
 
 .dropdown-header .nav-avatar {
@@ -287,7 +287,7 @@
 }
 
 .dropdown-item:hover {
-  background: rgba(102, 126, 234, 0.15);
+  background: var(--th-nav-active);
   color: #ffffff;
 }
 

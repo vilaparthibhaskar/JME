@@ -74,11 +74,12 @@
 
 /* Form Card */
 .version-form-card {
-  background: white;
+  background: var(--th-card);
+  background-attachment: fixed;
   border-radius: 12px;
   padding: 28px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--th-border);
   margin-bottom: 32px;
 }
 
@@ -376,11 +377,12 @@
 
 /* Version Card */
 .version-card {
-  background: white;
+  background: var(--th-card);
+  background-attachment: fixed;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--th-border);
   transition: box-shadow 0.2s;
 }
 

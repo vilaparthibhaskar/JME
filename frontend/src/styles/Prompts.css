@@ -68,8 +68,9 @@
 
 /* ── Form card ───────────────────────────────────────────────────────────── */
 .prompt-form-card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--th-card);
+  background-attachment: fixed;
+  border: 1px solid var(--th-border);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 28px;
@@ -196,8 +197,9 @@
 }
 
 .prompt-card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--th-card);
+  background-attachment: fixed;
+  border: 1px solid var(--th-border);
   border-radius: 12px;
   padding: 18px 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);

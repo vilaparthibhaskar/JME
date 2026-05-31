@@ -9,6 +9,8 @@ import Prompts from '../pages/Prompts.jsx'
 import Jobs from '../pages/Jobs.jsx'
 import Analytics from '../pages/Analytics.jsx'
 import Companies from '../pages/Companies.jsx'
+import Applied from '../pages/Applied.jsx'
+import Recruiters from '../pages/Recruiters.jsx'
 import ProtectedRoute from '../components/ProtectedRoute.jsx'
 import AdminRoute from '../components/AdminRoute.jsx'
 import MainLayout from '../components/MainLayout.jsx'
@@ -59,6 +61,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Prompts />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/applied',
+        element: (
+          <ProtectedRoute>
+            <Applied />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/recruiters',
+        element: (
+          <ProtectedRoute>
+            <Recruiters />
           </ProtectedRoute>
         ),
       },

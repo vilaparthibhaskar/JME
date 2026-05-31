@@ -189,7 +189,7 @@ export default function Dashboard() {
       <style>{`
         .db-root {
           min-height: calc(100vh - 64px);
-          background: #f3f4f8;
+          background: transparent;
           padding: 36px 32px 60px;
           font-family: inherit;
         }
@@ -237,14 +237,15 @@ export default function Dashboard() {
           gap: 18px;
         }
         .db-stat {
-          background: #fff;
+          background: var(--th-card);
+          background-attachment: fixed;
           border-radius: 14px;
           padding: 22px 20px;
           display: flex;
           align-items: center;
           gap: 16px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-          border: 1px solid rgba(0,0,0,0.04);
+          border: 1px solid var(--th-border);
         }
         .db-stat-icon { font-size: 28px; flex-shrink: 0; }
         .db-stat-val {
@@ -272,11 +273,12 @@ export default function Dashboard() {
           gap: 20px;
         }
         .db-section {
-          background: #fff;
+          background: var(--th-card);
+          background-attachment: fixed;
           border-radius: 16px;
           padding: 28px;
           box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-          border: 1px solid rgba(0,0,0,0.04);
+          border: 1px solid var(--th-border);
         }
 
         .db-section-head {

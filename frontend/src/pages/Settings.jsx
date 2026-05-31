@@ -3,10 +3,25 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../services/api'
 import { updateProfileStart, updateProfileSuccess, updateProfileFailure } from '../store/authSlice'
+import { setThemeColor } from '../store/themeSlice'
 import '../styles/Settings.css'
+
+const THEME_PRESETS = [
+  { hex: '#52796f', name: 'Sage Teal' },
+  { hex: '#adc178', name: 'Olive Green' },
+  { hex: '#667eea', name: 'Indigo' },
+  { hex: '#8b5cf6', name: 'Violet' },
+  { hex: '#e07b53', name: 'Terracotta' },
+  { hex: '#5b8fa8', name: 'Steel Blue' },
+  { hex: '#c2847a', name: 'Dusty Rose' },
+  { hex: '#2d6a4f', name: 'Forest' },
+  { hex: '#e9c46a', name: 'Wheat Gold' },
+  { hex: '#6b7280', name: 'Slate' },
+]
 
 export default function Settings() {
   const { user, token } = useSelector((state) => state.auth)
+  const themeColor = useSelector((state) => state.theme.color)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -150,6 +165,12 @@ export default function Settings() {
               👤 Profile
             </button>
             <button 
+              className={`settings-menu-item ${activeTab === 'appearance' ? 'active' : ''}`}
+              onClick={() => setActiveTab('appearance')}
+            >
+              🎨 Appearance
+            </button>
+            <button 
               className={`settings-menu-item ${activeTab === 'security' ? 'active' : ''}`}
               onClick={() => setActiveTab('security')}
             >
@@ -288,6 +309,49 @@ export default function Settings() {
                 </div>
               </div>
             </>
+          )}
+
+          {/* Appearance Tab */}
+          {activeTab === 'appearance' && (
+            <div className="settings-card">
+              <h2>Appearance</h2>
+              <p style={{ color: '#666', marginBottom: '24px', fontSize: '14px' }}>
+                Choose a theme color to personalize the application's look and feel.
+              </p>
+
+              <div className="theme-palette-label">Preset Colors</div>
+              <div className="theme-palette">
+                {THEME_PRESETS.map(({ hex, name }) => (
+                  <button
+                    key={hex}
+                    className={`theme-swatch${themeColor === hex ? ' active' : ''}`}
+                    style={{ background: hex }}
+                    title={name}
+                    onClick={() => dispatch(setThemeColor(hex))}
+                  >
+                    {themeColor === hex && <span className="theme-swatch-check">✓</span>}
+                  </button>
+                ))}
+              </div>
+
+              <div className="theme-custom-row">
+                <label className="theme-custom-label" htmlFor="customColor">Custom Color</label>
+                <div className="theme-custom-input-wrap">
+                  <input
+                    id="customColor"
+                    type="color"
+                    className="theme-color-input"
+                    value={themeColor}
+                    onChange={(e) => dispatch(setThemeColor(e.target.value))}
+                  />
+                  <span className="theme-hex-value">{themeColor.toUpperCase()}</span>
+                </div>
+              </div>
+
+              <div className="theme-preview-strip" style={{ background: `linear-gradient(160deg, #fff 0%, ${themeColor}22 50%, ${themeColor}55 100%)` }}>
+                <span>Theme preview</span>
+              </div>
+            </div>
           )}
 
           {/* Security Tab */}

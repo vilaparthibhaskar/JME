@@ -14,6 +14,7 @@ class UserUpdate(BaseModel):
     email: Optional[str] = None
     full_name: Optional[str] = None
     resume_name: Optional[str] = None
+    theme_color: Optional[str] = None
 
 class ChangePassword(BaseModel):
     current_password: str
@@ -36,6 +37,7 @@ class User(BaseModel):
     updated_at: datetime
     last_login: Optional[datetime] = None
     resume_downloads: int = 0
+    theme_color: Optional[str] = '#52796f'
 
     class Config:
         from_attributes = True

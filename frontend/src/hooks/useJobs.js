@@ -24,6 +24,7 @@ export function useJobs({ selectedCompanyIds, dateFilter, dateFrom, dateTo, jobS
   const [refreshing, setRefreshing] = useState(false) // true when stale cache is shown, fresh in progress
   const [hasMore, setHasMore]    = useState(false)
   const [totalCount, setTotal]   = useState(0)
+  const [lastScraped, setLastScraped] = useState({})  // { [company_id]: ISO UTC string }
 
   const pageRef     = useRef(1)
   const sentinelRef = useRef(null)
@@ -81,6 +82,7 @@ export function useJobs({ selectedCompanyIds, dateFilter, dateFrom, dateTo, jobS
           setJobs(cached.jobs)
           setHasMore(cached.has_more)
           setTotal(cached.total)
+          if (cached.last_scraped) setLastScraped(prev => ({ ...prev, ...cached.last_scraped }))
           pageRef.current = page
           setLoading(false)     // hide full-page spinner — cached jobs are visible
           setRefreshing(true)   // show subtle "refreshing" indicator
@@ -98,6 +100,7 @@ export function useJobs({ selectedCompanyIds, dateFilter, dateFrom, dateTo, jobS
       setJobs(prev => append ? [...prev, ...data.jobs] : data.jobs)
       setHasMore(data.has_more)
       setTotal(data.total)
+      if (data.last_scraped) setLastScraped(prev => ({ ...prev, ...data.last_scraped }))
       pageRef.current = page
     } catch (e) {
       if (myId !== fetchIdRef.current) return
@@ -139,6 +142,6 @@ export function useJobs({ selectedCompanyIds, dateFilter, dateFrom, dateTo, jobS
     return () => observerRef.current?.disconnect()
   }, [hasMore, loading, loadMore])
 
-  return { jobs, loading, refreshing, hasMore, totalCount, sentinelRef }
+  return { jobs, loading, refreshing, hasMore, totalCount, lastScraped, sentinelRef }
 }
 
