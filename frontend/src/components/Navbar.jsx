@@ -43,7 +43,7 @@ export default function Navbar() {
                 <Link to="/recruiters"  className={isActive('/recruiters')}>Recruiters</Link>
                 {user?.is_admin && <Link to="/jobs"      className={isActive('/jobs')}>Jobs</Link>}
                 {user?.is_admin && <Link to="/analytics" className={isActive('/analytics')}>Analytics</Link>}
-                {user?.is_admin && <Link to="/companies" className={isActive('/companies')}>Companies</Link>}
+                <Link to="/companies" className={isActive('/companies')}>Companies</Link>
                 <Link to="/settings"   className={isActive('/settings')}>Settings</Link>
               </div>
 
@@ -75,7 +75,7 @@ export default function Navbar() {
                     <Link to="/recruiters"  className="dropdown-item">👤 Recruiters</Link>
                     {user?.is_admin && <Link to="/jobs"      className="dropdown-item">💼 Jobs</Link>}
                     {user?.is_admin && <Link to="/analytics" className="dropdown-item">📊 Analytics</Link>}
-                    {user?.is_admin && <Link to="/companies" className="dropdown-item">🏢 Companies</Link>}
+                    <Link to="/companies" className="dropdown-item">🏢 Companies</Link>
                     <Link to="/settings"  className="dropdown-item">⚙️ Settings</Link>
                     <div className="dropdown-divider" />
                     <button onClick={handleLogout} className="dropdown-item logout-item">

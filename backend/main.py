@@ -7,6 +7,8 @@ from jobs_router import jobs_router
 from user_jobs_router import router as user_jobs_router
 from applied_router import router as applied_router
 from user_companies_router import router as user_companies_router
+from tracked_companies_router import router as tracked_companies_router
+from tracked_company_groups_router import router as tracked_company_groups_router
 from recruiters_router import router as recruiters_router
 from recruiter_groups_router import router as recruiter_groups_router
 from database import engine
@@ -60,6 +62,14 @@ for _stmt in _applied_migrations:
     except Exception:
         pass  # Column already exists
 
+# Add card_color to tracked companies if it doesn't exist (one-time migration)
+try:
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE user_tracked_companies ADD COLUMN card_color VARCHAR(20) DEFAULT '#eaf3ff'"))
+        conn.commit()
+except Exception:
+    pass  # Column already exists
+
 # Include routers
 app.include_router(auth_router)
 app.include_router(resume_router)
@@ -70,6 +80,8 @@ app.include_router(jobs_router)
 app.include_router(user_jobs_router)
 app.include_router(applied_router)
 app.include_router(user_companies_router)
+app.include_router(tracked_companies_router)
+app.include_router(tracked_company_groups_router)
 app.include_router(recruiters_router)
 app.include_router(recruiter_groups_router)
 

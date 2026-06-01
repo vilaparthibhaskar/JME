@@ -7,6 +7,10 @@ const IC = {
   wave:  String.fromCodePoint(0x1F44B),         // 👋
   clip:  String.fromCodePoint(0x1F4CB),         // 📋
   inbox: String.fromCodePoint(0x1F4E5),         // 📥
+  case:  String.fromCodePoint(0x1F4BC),         // 💼
+  bldg:  String.fromCodePoint(0x1F3E2),         // 🏢
+  rec:   String.fromCodePoint(0x1F465),         // 👥
+  grp:   String.fromCodePoint(0x1F5C2, 0xFE0F), // 🗂️
   cal:   String.fromCodePoint(0x1F4C5),         // 📅
   clock: String.fromCodePoint(0x1F550),         // 🕐
   doc:   String.fromCodePoint(0x1F4C4),         // 📄
@@ -39,13 +43,44 @@ export default function Dashboard() {
   const { user, token } = useSelector((state) => state.auth)
   const navigate = useNavigate()
   const [versions, setVersions] = useState([])
+  const [overview, setOverview] = useState({
+    applied: 0,
+    trackedCompanies: 0,
+    companyGroups: 0,
+    recruiters: 0,
+    recruiterGroups: 0,
+  })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.getVersions(token)
-      .then(setVersions)
-      .catch(() => setVersions([]))
-      .finally(() => setLoading(false))
+    let active = true
+
+    Promise.allSettled([
+      api.getVersions(token),
+      api.getAppliedJobs(token),
+      api.getTrackedCompanies(token),
+      api.getTrackedCompanyGroups(token),
+      api.getRecruiters(token),
+      api.getRecruiterGroups(token),
+    ])
+      .then(([verRes, appliedRes, trackedRes, trackedGroupRes, recruiterRes, recruiterGroupRes]) => {
+        if (!active) return
+
+        setVersions(verRes.status === 'fulfilled' ? verRes.value : [])
+
+        setOverview({
+          applied: appliedRes.status === 'fulfilled' ? appliedRes.value.length : 0,
+          trackedCompanies: trackedRes.status === 'fulfilled' ? trackedRes.value.length : 0,
+          companyGroups: trackedGroupRes.status === 'fulfilled' ? trackedGroupRes.value.length : 0,
+          recruiters: recruiterRes.status === 'fulfilled' ? recruiterRes.value.length : 0,
+          recruiterGroups: recruiterGroupRes.status === 'fulfilled' ? recruiterGroupRes.value.length : 0,
+        })
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => { active = false }
   }, [token])
 
   const recent = [...versions].reverse().slice(0, 3)
@@ -71,6 +106,41 @@ export default function Dashboard() {
           <div>
             <div className="db-stat-val">{loading ? IC.dots : versions.length}</div>
             <div className="db-stat-label">Resume Versions</div>
+          </div>
+        </div>
+        <div className="db-stat">
+          <span className="db-stat-icon">{IC.case}</span>
+          <div>
+            <div className="db-stat-val">{loading ? IC.dots : overview.applied}</div>
+            <div className="db-stat-label">Applied Jobs</div>
+          </div>
+        </div>
+        <div className="db-stat">
+          <span className="db-stat-icon">{IC.bldg}</span>
+          <div>
+            <div className="db-stat-val">{loading ? IC.dots : overview.trackedCompanies}</div>
+            <div className="db-stat-label">Tracked Companies</div>
+          </div>
+        </div>
+        <div className="db-stat">
+          <span className="db-stat-icon">{IC.grp}</span>
+          <div>
+            <div className="db-stat-val">{loading ? IC.dots : overview.companyGroups}</div>
+            <div className="db-stat-label">Company Groups</div>
+          </div>
+        </div>
+        <div className="db-stat">
+          <span className="db-stat-icon">{IC.rec}</span>
+          <div>
+            <div className="db-stat-val">{loading ? IC.dots : overview.recruiters}</div>
+            <div className="db-stat-label">Recruiters</div>
+          </div>
+        </div>
+        <div className="db-stat">
+          <span className="db-stat-icon">{IC.grp}</span>
+          <div>
+            <div className="db-stat-val">{loading ? IC.dots : overview.recruiterGroups}</div>
+            <div className="db-stat-label">Recruiter Groups</div>
           </div>
         </div>
         <div className="db-stat">
@@ -144,6 +214,9 @@ export default function Dashboard() {
               { icon: IC.clip,  label: 'Manage Versions',  sub: 'Create or edit resume versions',   path: '/versions' },
               { icon: IC.doc,   label: 'Generate Resume',  sub: 'Export a polished .docx file',     path: '/resume'   },
               { icon: IC.chat,  label: 'AI Prompts',       sub: 'Tailor your content with prompts', path: '/prompts'  },
+              { icon: IC.case,  label: 'Applied Tracker',  sub: 'Track applications and interviews', path: '/applied'  },
+              { icon: IC.bldg,  label: 'Companies Board',  sub: 'Manage tracked companies & groups', path: '/companies' },
+              { icon: IC.rec,   label: 'Recruiter CRM',    sub: 'Organize recruiter contacts',       path: '/recruiters' },
               { icon: IC.gear,  label: 'Settings',         sub: 'Update profile & password',        path: '/settings' },
             ].map((a) => (
               <button key={a.path} className="db-action-card" onClick={() => navigate(a.path)}>
@@ -233,7 +306,7 @@ export default function Dashboard() {
           max-width: 1200px;
           margin: 0 auto 32px;
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
           gap: 18px;
         }
         .db-stat {
@@ -353,7 +426,23 @@ export default function Dashboard() {
         .db-empty-icon { font-size: 40px; }
 
         /* â”€â”€ Quick actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-        .db-action-list { display: flex; flex-direction: column; gap: 10px; }
+        .db-action-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          max-height: 300px; /* ~4 action cards visible */
+          overflow-y: auto;
+          padding-right: 4px;
+        }
+        .db-action-list::-webkit-scrollbar { width: 8px; }
+        .db-action-list::-webkit-scrollbar-track { background: transparent; }
+        .db-action-list::-webkit-scrollbar-thumb {
+          background: color-mix(in srgb, var(--th-nav-accent, #667eea) 45%, #c7c9d8);
+          border-radius: 999px;
+        }
+        .db-action-list::-webkit-scrollbar-thumb:hover {
+          background: color-mix(in srgb, var(--th-nav-accent, #667eea) 60%, #a8acc2);
+        }
         .db-action-card {
           display: flex;
           align-items: center;

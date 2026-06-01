@@ -4,7 +4,7 @@ User Companies endpoints — per-user company list for Applied Jobs tracking.
 Routes:
     GET    /api/user-companies          → list user's companies
     POST   /api/user-companies          → create { name, color }
-    DELETE /api/user-companies/{id}     → delete company + ALL its applied_jobs
+    DELETE /api/user-companies/{id}     → delete company from user's list only
 """
 
 import os
@@ -17,7 +17,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import User as UserModel, UserCompany, AppliedJob
+from models import User as UserModel, UserCompany
 
 router = APIRouter(prefix="/api/user-companies", tags=["user-companies"])
 
@@ -99,12 +99,7 @@ def delete_company(company_id: int, token: str, db: Session = Depends(get_db)):
     ).first()
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
-    # Cascade-delete all applied jobs for this company/user
-    deleted_count = (
-        db.query(AppliedJob)
-        .filter(AppliedJob.company_id == company_id, AppliedJob.user_id == user.id)
-        .delete(synchronize_session=False)
-    )
+
     db.delete(company)
     db.commit()
-    return {"ok": True, "deleted_applications": deleted_count}
+    return {"ok": True, "deleted_company_id": company_id}

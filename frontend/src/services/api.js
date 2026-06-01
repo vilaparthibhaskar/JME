@@ -332,6 +332,85 @@ const api = {
     return response.json()
   },
 
+  // ── Companies Page (independent) ────────────────────────────────────────
+  async getTrackedCompanies(token) {
+    const response = await fetch(`${API_BASE_URL}/api/tracked-companies?token=${token}`)
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to fetch tracked companies')
+    }
+    return response.json()
+  },
+
+  async createTrackedCompany(token, data) {
+    const response = await fetch(`${API_BASE_URL}/api/tracked-companies?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to create tracked company')
+    }
+    return response.json()
+  },
+
+  async deleteTrackedCompany(token, id) {
+    const response = await fetch(`${API_BASE_URL}/api/tracked-companies/${id}?token=${token}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to delete tracked company')
+    }
+    return response.json()
+  },
+
+  async getTrackedCompanyGroups(token) {
+    const response = await fetch(`${API_BASE_URL}/api/tracked-company-groups?token=${token}`)
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to load company groups')
+    }
+    return response.json()
+  },
+
+  async createTrackedCompanyGroup(token, data) {
+    const response = await fetch(`${API_BASE_URL}/api/tracked-company-groups?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to create company group')
+    }
+    return response.json()
+  },
+
+  async updateTrackedCompanyGroup(token, id, data) {
+    const response = await fetch(`${API_BASE_URL}/api/tracked-company-groups/${id}?token=${token}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to update company group')
+    }
+    return response.json()
+  },
+
+  async deleteTrackedCompanyGroup(token, id) {
+    const response = await fetch(`${API_BASE_URL}/api/tracked-company-groups/${id}?token=${token}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Failed to delete company group')
+    }
+  },
+
   // ── Recruiters ─────────────────────────────────────────────────────────────
   async getRecruiters(token) {
     const response = await fetch(`${API_BASE_URL}/api/recruiters?token=${token}`)

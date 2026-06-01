@@ -141,3 +141,23 @@ class PromptResponse(PromptBase):
 
     class Config:
         from_attributes = True
+
+
+class TrackedCompanyBase(BaseModel):
+    name: str
+    apply_url: str
+    card_color: Optional[str] = None
+
+
+class TrackedCompanyCreate(TrackedCompanyBase):
+    pass
+
+
+class TrackedCompanyResponse(TrackedCompanyBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True

@@ -115,6 +115,37 @@ class UserCompany(Base):
         return f"<UserCompany(id={self.id}, name={self.name}, user_id={self.user_id})>"
 
 
+class UserTrackedCompany(Base):
+    """Independent user-specific company table for the Companies page."""
+    __tablename__ = "user_tracked_companies"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    name       = Column(String(255), nullable=False)
+    apply_url  = Column(Text, nullable=False)
+    card_color = Column(String(20), nullable=False, default="#eaf3ff")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<UserTrackedCompany(id={self.id}, name={self.name}, user_id={self.user_id})>"
+
+
+class UserTrackedCompanyGroup(Base):
+    """Independent groups for user tracked companies on Companies page."""
+    __tablename__ = "user_tracked_company_groups"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    name       = Column(String(255), nullable=False)
+    member_ids = Column(JSON, nullable=False, default=list)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<UserTrackedCompanyGroup(id={self.id}, name={self.name}, user_id={self.user_id})>"
+
+
 class AppliedJob(Base):
     """Tracks job applications submitted by a user."""
     __tablename__ = "applied_jobs"

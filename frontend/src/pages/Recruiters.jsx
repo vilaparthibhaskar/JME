@@ -640,27 +640,27 @@ export default function Recruiters() {
         .rc-body { flex: 1; display: flex; overflow: hidden; }
 
         /* Sidebar */
-        .rc-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid #e8e8f0; background: #fafafc; display: flex; flex-direction: column; overflow-y: auto; padding: 14px 10px; gap: 2px; }
+        .rc-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--th-border, #e8e8f0); background: var(--th-sidebar, #fafafc); display: flex; flex-direction: column; overflow-y: auto; padding: 14px 10px; gap: 2px; }
         .rc-sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px 10px; }
         .rc-sidebar-title { font-size: 10.5px; font-weight: 800; color: #9090b0; text-transform: uppercase; letter-spacing: 0.8px; }
-        .rc-sidebar-add { background: none; border: 1px solid #d0d0e8; border-radius: 7px; color: #667eea; font-size: 16px; line-height: 1; cursor: pointer; padding: 1px 6px; transition: background 0.12s; }
-        .rc-sidebar-add:hover { background: rgba(102,126,234,0.1); }
-        .rc-sidebar-divider { height: 1px; background: #e8e8f0; margin: 6px 8px; }
+        .rc-sidebar-add { background: none; border: 1px solid color-mix(in srgb, var(--th-nav-accent, #667eea) 35%, #d0d0e8); border-radius: 7px; color: var(--th-nav-accent, #667eea); font-size: 16px; line-height: 1; cursor: pointer; padding: 1px 6px; transition: background 0.12s; }
+        .rc-sidebar-add:hover { background: color-mix(in srgb, var(--th-nav-accent, #667eea) 12%, transparent); }
+        .rc-sidebar-divider { height: 1px; background: var(--th-border, #e8e8f0); margin: 6px 8px; }
         .rc-sidebar-hint { font-size: 12px; color: #b0b0c8; text-align: center; padding: 16px 8px; line-height: 1.5; }
 
         /* Group items */
         .rc-group-item { width: 100%; display: flex; align-items: center; gap: 7px; padding: 8px 10px; border-radius: 10px; background: none; border: none; cursor: pointer; text-align: left; transition: background 0.12s; position: relative; }
-        .rc-group-item:hover { background: #f0f0fa; }
+        .rc-group-item:hover { background: color-mix(in srgb, var(--th-nav-accent, #667eea) 10%, transparent); }
         .rc-group-item:hover .rc-group-actions { opacity: 1; }
-        .rc-group-item--active { background: rgba(102,126,234,0.1) !important; }
+        .rc-group-item--active { background: color-mix(in srgb, var(--th-nav-accent, #667eea) 14%, transparent) !important; }
         .rc-group-item-icon { font-size: 14px; flex-shrink: 0; }
         .rc-group-item-name { font-size: 13px; font-weight: 600; color: #1a1a2e; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .rc-group-item--active .rc-group-item-name { color: #667eea; }
+        .rc-group-item--active .rc-group-item-name { color: var(--th-nav-accent, #667eea); }
         .rc-group-item-cnt { font-size: 11px; font-weight: 700; color: #9090b0; background: #ececf5; padding: 1px 7px; border-radius: 20px; flex-shrink: 0; }
-        .rc-group-item--active .rc-group-item-cnt { background: rgba(102,126,234,0.15); color: #667eea; }
-        .rc-group-actions { display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #fafafc; border-radius: 6px; padding: 1px; }
+        .rc-group-item--active .rc-group-item-cnt { background: color-mix(in srgb, var(--th-nav-accent, #667eea) 18%, transparent); color: var(--th-nav-accent, #667eea); }
+        .rc-group-actions { display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--th-sidebar, #fafafc); border-radius: 6px; padding: 1px; }
         .rc-group-action-btn { background: none; border: none; cursor: pointer; font-size: 12px; padding: 3px 4px; border-radius: 5px; line-height: 1; }
-        .rc-group-action-btn:hover { background: #e8e8f0; }
+        .rc-group-action-btn:hover { background: color-mix(in srgb, var(--th-nav-accent, #667eea) 12%, transparent); }
         .rc-group-action-btn--del:hover { background: rgba(239,68,68,0.1); }
 
         /* Main area */
@@ -715,7 +715,7 @@ export default function Recruiters() {
 
         @media (max-width: 700px) {
           .rc-body { flex-direction: column; }
-          .rc-sidebar { width: 100%; flex-direction: row; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; border-right: none; border-bottom: 1px solid #e8e8f0; padding: 8px; gap: 6px; max-height: 64px; }
+          .rc-sidebar { width: 100%; flex-direction: row; overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; border-right: none; border-bottom: 1px solid var(--th-border, #e8e8f0); padding: 8px; gap: 6px; max-height: 64px; }
           .rc-sidebar-head { display: none; }
           .rc-sidebar-hint { display: none; }
           .rc-sidebar-divider { width: 1px; height: auto; margin: 0; }
