@@ -138,6 +138,8 @@ export default function Jobs() {
     .filter(g => g.companies.length > 0)
 
   // ── Render ────────────────────────────────────────────────────────────────
+  const [mobileSbOpen, setMobileSbOpen] = useState(false)
+
   return (
     <div className="jb-root">
 
@@ -145,6 +147,9 @@ export default function Jobs() {
       <div className="jb-topbar">
         <div className="jb-topbar-left">
           <h1 className="jb-page-title">Jobs Board</h1>
+          <button className="jb-sb-toggle" onClick={() => setMobileSbOpen(o => !o)}>
+            {mobileSbOpen ? '▲ Hide Companies' : '🏢 Companies'}
+          </button>
           {!savedView && selectedCompanies.size > 0 && (
             <span className="jb-count-badge">{totalCount} positions</span>
           )}
@@ -196,7 +201,7 @@ export default function Jobs() {
       <div className="jb-body">
 
         {/* ── COMPANIES SIDEBAR (1/4) ─────────────────────────────────── */}
-        <aside className="jb-sidebar">
+        <aside className={`jb-sidebar${mobileSbOpen ? ' jb-sidebar--open' : ''}`}>
           <div className="jb-sidebar-head">
             <span className="jb-sidebar-title">Companies</span>
             <div className="jb-sidebar-actions">
@@ -531,7 +536,36 @@ export default function Jobs() {
         @keyframes jbPulse { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); } 40% { opacity: 1; transform: scale(1); } }
         @media (max-width: 900px) { .jb-sidebar { width: 200px; min-width: 180px; } .jb-cards { grid-template-columns: 1fr; } }
 
-        @media (max-width: 640px) { .jb-body { flex-direction: column; overflow: auto; } .jb-sidebar { width: 100%; max-width: 100%; height: 200px; border-right: none; border-bottom: 1px solid #e8e8f0; } .jb-feed { overflow-y: auto; } .jb-topbar { padding: 12px 16px; } }
+        .jb-sb-toggle { display: none; }
+
+        @media (max-width: 640px) {
+          .jb-body { flex-direction: column; overflow: auto; }
+          .jb-sidebar { display: none; width: 100%; max-width: 100%; height: auto; max-height: 240px; border-right: none; border-bottom: 1px solid #e8e8f0; overflow-y: auto; }
+          .jb-sidebar.jb-sidebar--open { display: flex; flex-direction: column; }
+          .jb-feed { overflow-y: auto; }
+          .jb-topbar { padding: 10px 14px; flex-direction: column; align-items: flex-start; gap: 10px; }
+          .jb-topbar-left { flex-wrap: wrap; gap: 8px; }
+          .jb-filters { width: 100%; gap: 8px; }
+          .jb-search-wrap { width: 100%; }
+          .jb-search { width: 100%; }
+          .jb-search:focus { width: 100%; }
+          .jb-date-pills { flex-wrap: wrap; }
+          .jb-card { padding: 16px 14px 14px; }
+          .jb-card-badges { justify-content: flex-start; flex-wrap: wrap; }
+          .jb-card-actions { flex-wrap: wrap; }
+          .jb-feed { padding: 14px 12px; }
+          .jb-page-title { font-size: 17px; }
+          .jb-sb-toggle { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border: 1.5px solid #e0e0ea; border-radius: 20px; background: #fff; font-size: 12px; font-weight: 700; color: #667eea; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+          .jb-sb-toggle:hover { border-color: #667eea; background: rgba(102,126,234,0.06); }
+        }
+
+        @media (max-width: 440px) {
+          .jb-card-top { flex-wrap: wrap; }
+          .jb-card-badges { width: 100%; }
+          .jb-btn-resume { margin-left: 0; width: 100%; }
+          .jb-cards { gap: 12px; }
+          .jb-date-range { flex-wrap: wrap; gap: 6px; }
+        }
       `}</style>
     </div>
   )

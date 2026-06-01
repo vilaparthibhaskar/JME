@@ -785,3 +785,45 @@
     font-size: 1.6rem;
   }
 }
+
+@media (max-width: 480px) {
+  .companies-container {
+    padding: 8px;
+    gap: 10px;
+  }
+  .companies-header {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+  .companies-title {
+    font-size: 1.25rem;
+  }
+  .companies-subtitle {
+    font-size: 0.82rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .companies-main {
+    padding: 10px;
+  }
+  .companies-grid {
+    gap: 12px;
+  }
+  .company-card {
+    padding: 16px 12px 14px;
+  }
+  .company-actions {
+    flex-direction: column;
+  }
+  .company-btn {
+    width: 100%;
+    flex: unset;
+  }
+  .companies-modal {
+    border-radius: 14px;
+  }
+  .companies-form-grid {
+    gap: 8px;
+  }
+}

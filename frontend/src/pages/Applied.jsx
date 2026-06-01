@@ -475,6 +475,8 @@ export default function Applied() {
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
+  const [mobileSbOpen, setMobileSbOpen] = useState(false)
+
   return (
     <div className="ap-root">
 
@@ -525,6 +527,9 @@ export default function Applied() {
           <button className={`ap-tab-btn${activeTab === 'analytics' ? ' active' : ''}`}
             onClick={() => { setActiveTab('analytics'); setShowForm(false) }}>Analytics</button>
         </div>
+        <button className="ap-sb-toggle" onClick={() => setMobileSbOpen(o => !o)}>
+          {mobileSbOpen ? '▲ Hide Companies' : '🏢 Companies'}
+        </button>
         {activeTab === 'applications' && selectedCompany && (
           <button className="ap-add-app-btn" onClick={openForm}>+ Add Application</button>
         )}
@@ -534,7 +539,7 @@ export default function Applied() {
       <div className="ap-body">
 
         {/* SIDEBAR */}
-        <aside className="ap-sidebar">
+        <aside className={`ap-sidebar${mobileSbOpen ? ' ap-sidebar--open' : ''}`}>
           <div className="ap-sidebar-head">
             <span className="ap-sidebar-title">Companies</span>
             <button className="ap-text-btn" onClick={() => setSelectedCompany(null)}>All</button>
@@ -1252,6 +1257,7 @@ export default function Applied() {
         .ap-filter-clear { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 8px; color: #ef4444; font-size: 12px; font-weight: 700; padding: 5px 11px; cursor: pointer; transition: background 0.15s; }
         .ap-filter-clear:hover { background: rgba(239,68,68,0.14); }
         .ap-filter-shown { font-size: 12px; color: #9090b0; font-weight: 600; margin-left: 2px; }
+        .ap-sb-toggle { display: none; }
         .ap-body { display: flex; flex: 1; overflow: hidden; }
         .ap-sidebar { width: 25%; min-width: 220px; max-width: 300px; background: var(--th-sidebar); background-attachment: fixed; border-right: 1px solid var(--th-border); display: flex; flex-direction: column; flex-shrink: 0; }
         .ap-sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 10px; flex-shrink: 0; }
@@ -1447,10 +1453,35 @@ export default function Applied() {
         @media (max-width: 900px) { .ap-sidebar { width: 200px; min-width: 180px; } }
         @media (max-width: 640px) {
           .ap-body { flex-direction: column; overflow: auto; }
-          .ap-sidebar { width: 100%; max-width: 100%; border-right: none; border-bottom: 1px solid #e8e8f0; }
-          .ap-co-list { max-height: 180px; }
-          .ap-main { overflow-y: auto; }
+          .ap-topbar { padding: 10px 14px; gap: 8px; }
+          .ap-sidebar { display: none; width: 100%; max-width: 100%; border-right: none; border-bottom: 1px solid #e8e8f0; flex-shrink: 0; }
+          .ap-sidebar.ap-sidebar--open { display: flex; flex-direction: column; }
+          .ap-co-list { max-height: 200px; }
+          .ap-main { overflow-y: auto; padding: 12px; }
+          .ap-sb-toggle { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border: 1.5px solid #e0e0ea; border-radius: 20px; background: #fff; font-size: 12px; font-weight: 700; color: #667eea; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+          .ap-sb-toggle:hover { border-color: #667eea; background: rgba(102,126,234,0.06); }
           .ap-form-grid { grid-template-columns: 1fr; }
+          .ap-filters { padding: 8px 10px; gap: 6px; }
+          .fdd-btn { min-width: 90px; max-width: 130px; font-size: 12px; }
+          .an-stats { grid-template-columns: repeat(3, 1fr); }
+          .an-row-2col { grid-template-columns: 1fr; }
+          .an-status-row { grid-template-columns: 1fr auto auto auto; }
+          .an-status-name { min-width: 0; font-size: 12px; }
+          .an-co-row { grid-template-columns: 22px 1fr auto; }
+          .an-contract-grid { grid-template-columns: 1fr; }
+          .an-custom-dates { flex-wrap: wrap; gap: 8px; padding-left: 0; border-left: none; }
+          .an-filter-bar { padding: 12px 14px; gap: 10px; }
+          .an-section { padding: 14px 12px; }
+        }
+        @media (max-width: 440px) {
+          .an-stats { grid-template-columns: repeat(2, 1fr); }
+          .ap-topbar { flex-direction: column; align-items: flex-start; }
+          .ap-tab-toggle { align-self: flex-start; }
+          .ap-add-app-btn { width: 100%; text-align: center; }
+          .ap-topbar-left { gap: 6px; }
+          .ap-card-top { flex-wrap: wrap; gap: 8px; }
+          .ap-card-right { flex-wrap: wrap; }
+          .ap-status-sel { min-width: 100px; }
         }
       `}</style>
     </div>

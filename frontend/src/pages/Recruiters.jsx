@@ -721,11 +721,24 @@ export default function Recruiters() {
           .rc-sidebar-divider { width: 1px; height: auto; margin: 0; }
           .rc-group-item { white-space: nowrap; flex-shrink: 0; width: auto; padding: 6px 12px; }
           .rc-group-actions { display: none; }
-          .rc-topbar { flex-direction: column; align-items: flex-start; }
+          .rc-topbar { flex-direction: column; align-items: flex-start; padding: 10px 14px; }
           .rc-topbar-right { width: 100%; flex-wrap: wrap; }
           .rc-search { width: 100%; }
           .rc-form-2col { grid-template-columns: 1fr; }
           .rc-main { padding: 12px; }
+        }
+        @media (max-width: 440px) {
+          .rc-topbar { gap: 8px; }
+          .rc-add-btn { width: 100%; text-align: center; }
+          .rc-card { padding: 14px 12px 10px; }
+          .rc-card-head { gap: 8px; }
+          .rc-card-name { font-size: 14px; }
+          .rc-drawer { border-radius: 16px; }
+          .rc-modal { padding: 24px 18px 18px; }
+          .rc-page-title { font-size: 17px; }
+          .rc-drawer-head { padding: 16px 18px 14px; }
+          .rc-form-body { padding: 16px 18px; }
+          .rc-drawer-foot { padding: 12px 18px 16px; }
         }
       `}</style>
     </div>
