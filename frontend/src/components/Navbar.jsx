@@ -53,6 +53,7 @@ export default function Navbar() {
               {/* Nav links */}
               <div className="navbar-links">
                 <Link to="/dashboard"  className={isActive('/dashboard')}>Dashboard</Link>
+                <Link to="/groups"     className={isActive('/groups')}>Groups</Link>
                 <Link to="/resume"     className={isActive('/resume')}>Resume</Link>
                 <Link to="/versions"   className={isActive('/versions')}>Versions</Link>
                 <Link to="/prompts"    className={isActive('/prompts')}>Prompts</Link>
@@ -86,6 +87,7 @@ export default function Navbar() {
                       </div>
                       <div className="dropdown-divider" />
                       <Link to="/dashboard" className="dropdown-item" onClick={() => setDropOpen(false)}>📊 Dashboard</Link>
+                      <Link to="/groups"    className="dropdown-item" onClick={() => setDropOpen(false)}>💬 Groups</Link>
                       <Link to="/resume"    className="dropdown-item" onClick={() => setDropOpen(false)}>📄 Resume</Link>
                       <Link to="/versions"  className="dropdown-item" onClick={() => setDropOpen(false)}>📋 Versions</Link>
                       <Link to="/prompts"   className="dropdown-item" onClick={() => setDropOpen(false)}>💬 Prompts</Link>

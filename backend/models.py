@@ -224,3 +224,51 @@ class RecruiterGroup(Base):
     def __repr__(self):
         return f"<RecruiterGroup(id={self.id}, name={self.name}, user_id={self.user_id})>"
 
+
+# ── User Groups (cross-user collaboration) ────────────────────────────────────
+
+class UserGroup(Base):
+    """A shared group owned by one admin user. All members can post messages."""
+    __tablename__ = "user_groups"
+
+    id           = Column(Integer, primary_key=True, index=True)
+    name         = Column(String(255), nullable=False)
+    description  = Column(Text, nullable=True)
+    admin_id     = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    created_at   = Column(DateTime, default=datetime.utcnow)
+    updated_at   = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<UserGroup(id={self.id}, name={self.name}, admin_id={self.admin_id})>"
+
+
+class UserGroupMember(Base):
+    """Membership table linking users to groups."""
+    __tablename__ = "user_group_members"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    group_id   = Column(Integer, ForeignKey("user_groups.id"), nullable=False, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    joined_at  = Column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("group_id", "user_id", name="uq_group_member"),
+    )
+
+    def __repr__(self):
+        return f"<UserGroupMember(group_id={self.group_id}, user_id={self.user_id})>"
+
+
+class UserGroupPost(Base):
+    """A message/post made by a member inside a group."""
+    __tablename__ = "user_group_posts"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    group_id   = Column(Integer, ForeignKey("user_groups.id"), nullable=False, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    content    = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<UserGroupPost(id={self.id}, group_id={self.group_id}, user_id={self.user_id})>"
+

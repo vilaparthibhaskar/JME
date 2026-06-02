@@ -1158,3 +1158,256 @@
   font-size: 13px;
   color: #718096;
 }
+
+/* ── Edit by Experience button bar ── */
+.edit-by-exp-bar {
+  max-width: 1300px;
+  margin: 0 auto 20px;
+  padding: 0 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.edit-by-exp-btn {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  letter-spacing: 0.2px;
+}
+
+.edit-by-exp-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ── Edit by Experience Modal ── */
+.exp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+
+.exp-modal {
+  background: var(--th-card, #fff);
+  border-radius: 14px;
+  width: 95vw;
+  max-width: 1300px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.exp-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--th-border, #e2e8f0);
+  flex-shrink: 0;
+}
+
+.exp-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.exp-modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exp-modal-save-btn {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #38a169 0%, #276749 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.exp-modal-save-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.exp-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #718096;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.exp-modal-close:hover {
+  background: #f1f5f9;
+  color: #2d3748;
+}
+
+.exp-modal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+.exp-modal-col {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden;
+  border-right: 1px solid var(--th-border, #e2e8f0);
+}
+
+.exp-modal-col:last-child {
+  border-right: none;
+}
+
+.exp-modal-col-title {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2d3748;
+  flex-shrink: 0;
+}
+
+/* Left col — experience list */
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.exp-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.exp-list-item:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.exp-list-item.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #eef0ff 0%, #f3e8ff 100%);
+}
+
+.exp-list-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.exp-list-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.exp-list-role {
+  font-size: 12px;
+  color: #667eea;
+  font-style: italic;
+}
+
+.exp-list-timeline {
+  font-size: 11px;
+  color: #a0aec0;
+}
+
+/* Middle col — JD + prompt */
+.exp-modal-col-mid {
+  gap: 10px;
+}
+
+.exp-modal-prompt-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* Right col — experience JSON */
+.exp-modal-col-right {
+  gap: 10px;
+}
+
+/* Shared textarea for modal */
+.exp-modal-textarea {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #1a202c;
+  resize: none;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.2s;
+  min-height: 0;
+}
+
+.exp-modal-textarea:focus {
+  border-color: #667eea;
+  background: #fff;
+}
+
+.exp-modal-json-textarea {
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+@media (max-width: 860px) {
+  .exp-modal-body {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .exp-modal-col {
+    border-right: none;
+    border-bottom: 1px solid var(--th-border, #e2e8f0);
+    min-height: 260px;
+  }
+  .exp-modal-col:last-child {
+    border-bottom: none;
+  }
+}

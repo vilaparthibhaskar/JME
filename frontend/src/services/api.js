@@ -500,6 +500,76 @@ const api = {
       throw new Error(error.detail || 'Failed to delete group')
     }
   },
+
+  // ── User Groups ────────────────────────────────────────────────────────────
+
+  async getUserGroups(token) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups?token=${token}`)
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to fetch groups') }
+    return response.json()
+  },
+
+  async createUserGroup(token, data) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to create group') }
+    return response.json()
+  },
+
+  async deleteUserGroup(token, groupId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/${groupId}?token=${token}`, { method: 'DELETE' })
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to delete group') }
+    return response.json()
+  },
+
+  async searchUsers(token, q = '') {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/users?token=${token}&q=${encodeURIComponent(q)}`)
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to search users') }
+    return response.json()
+  },
+
+  async addGroupMember(token, groupId, userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/${groupId}/members?token=${token}&user_id=${userId}`, { method: 'POST' })
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to add member') }
+    return response.json()
+  },
+
+  async removeGroupMember(token, groupId, userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/${groupId}/members/${userId}?token=${token}`, { method: 'DELETE' })
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to remove member') }
+    return response.json()
+  },
+
+  async leaveGroup(token, groupId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/${groupId}/leave?token=${token}`, { method: 'DELETE' })
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to leave group') }
+    return response.json()
+  },
+
+  async getGroupPosts(token, groupId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/${groupId}/posts?token=${token}`)
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to fetch posts') }
+    return response.json()
+  },
+
+  async createGroupPost(token, groupId, content) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/${groupId}/posts?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    })
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to post message') }
+    return response.json()
+  },
+
+  async deleteGroupPost(token, groupId, postId) {
+    const response = await fetch(`${API_BASE_URL}/api/user-groups/${groupId}/posts/${postId}?token=${token}`, { method: 'DELETE' })
+    if (!response.ok) { const e = await response.json(); throw new Error(e.detail || 'Failed to delete post') }
+    return response.json()
+  },
 }
 
 export default api

@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Login from '../pages/Login.jsx'
 import Signup from '../pages/Signup.jsx'
 import Dashboard from '../pages/Dashboard.jsx'
+import Groups from '../pages/Groups.jsx'
 import Settings from '../pages/Settings.jsx'
 import Resume from '../pages/Resume.jsx'
 import Versions from '../pages/Versions.jsx'
@@ -29,6 +30,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/groups',
+        element: (
+          <ProtectedRoute>
+            <Groups />
           </ProtectedRoute>
         ),
       },

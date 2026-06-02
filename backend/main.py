@@ -11,6 +11,7 @@ from tracked_companies_router import router as tracked_companies_router
 from tracked_company_groups_router import router as tracked_company_groups_router
 from recruiters_router import router as recruiters_router
 from recruiter_groups_router import router as recruiter_groups_router
+from user_groups_router import router as user_groups_router
 from database import engine
 from models import Base
 from sqlalchemy import text
@@ -84,6 +85,7 @@ app.include_router(tracked_companies_router)
 app.include_router(tracked_company_groups_router)
 app.include_router(recruiters_router)
 app.include_router(recruiter_groups_router)
+app.include_router(user_groups_router)
 
 # Health check endpoint
 @app.get("/")
